@@ -5,6 +5,9 @@
               jucerFormatVersion="1">
   <MAINGROUP id="t3j9no" name="true_stereo_panner">
     <GROUP id="{9C533A8F-E383-8A3A-3426-C416F35EBF18}" name="Source">
+      <FILE id="DadFyq" name="Stereo_panner.cpp" compile="1" resource="0"
+            file="Source/Stereo_panner.cpp"/>
+      <FILE id="XiAa2L" name="Stereo_panner.h" compile="0" resource="0" file="Source/Stereo_panner.h"/>
       <FILE id="m0RINN" name="PluginProcessor.cpp" compile="1" resource="0"
             file="Source/PluginProcessor.cpp"/>
       <FILE id="qAAYlG" name="PluginProcessor.h" compile="0" resource="0"
