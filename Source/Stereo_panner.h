@@ -29,14 +29,20 @@ typedef enum {
     SQUAREROOT4P5DB
 } panRule;
 
+template <typename SampleType> typedef struct {
+    SampleType gain_ll;
+    SampleType gain_rr;
+    SampleType gain_lr;
+    SampleType gain_rl:
+} true_stereo_state;
 template <typename SampleType> class Stereo_panner : public juce::dsp::Panner<SampleType> {
     
 public:
     Stereo_panner();
     ~Stereo_panner();
     
-    void prepare(const juce::dsp::ProcessSpec & spec) override;
-    void process(const juce::dsp::ProcessContextNonReplacing<SampleType> &context) override;
+    void prepare(const juce::dsp::ProcessSpec &spec) override;
+    void process_panner(const juce::dsp::ProcessContextNonReplacing<SampleType> &context);
     
     void set_pan_type(panType type);
     panType get_pan_type();
@@ -50,7 +56,6 @@ public:
     void process_binaural_pan(const juce::dsp::ProcessContextNonReplacing<SampleType> &context);
 private:
     SampleType pan;
-    float width;
     panType type;
     panRule rule;
 };
