@@ -8,11 +8,8 @@
 
 #pragma once
 
-#include <JuceHeader.h>
-#include "Stereo_panner.h"
-//==============================================================================
-/**
-*/
+#include "Panner.h"
+
 
 class True_stereo_pannerAudioProcessor  : public juce::AudioProcessor
                             #if JucePlugin_Enable_ARA
@@ -57,17 +54,19 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    void set_pan_type(panType type);
-    void set_pan_rule(panRule rule);
+    void set_pan_method(panMethod method);
     void set_pan(float pan);
     
     juce::AudioProcessorValueTreeState apvts;
 private:
-    Stereo_panner<float> panner;
-    panType type;
-    panRule rule;
-    float pan;
-    float width;
+    Panner<float> panner;
+    panMethod method;
+    monoPannerRule mono_rule;
+    stereoPannerRule stereo_rule;
+    binauralPannerRule binaural_rule;
+    float pan, width;
+    
+    // Editor //
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (True_stereo_pannerAudioProcessor)

@@ -140,8 +140,8 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
 
     auto audioBlock = juce::dsp::AudioBlock<float> (buffer);
     auto processContext = juce::dsp::ProcessContextReplacing<float> (audioBlock);
-    panner.setPan(apvts.getRawParameterValue("pan")->load());
-    this->setPanType((panning_type)(apvts.getRawParameterValue("panrule")->load()));
+    panner.set_pan(apvts.getRawParameterValue("pan")->load());
+    //this->setPanType((panning_type)(apvts.getRawParameterValue("panrule")->load()));
     panner.process(processContext);
 }
 
@@ -177,37 +177,12 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
     return new True_stereo_pannerAudioProcessor();
 }
 
-void True_stereo_pannerAudioProcessor::setPan(float pan) {
-    panner.setPan(pan);
+void True_stereo_pannerAudioProcessor::set_pan(float pan) {
+    panner.set_pan(pan);
 }
 
-void True_stereo_pannerAudioProcessor::setPanType(panning_type type) {
-    switch (type) {
-        case LINEAR:
-            panner.setRule(juce::dsp::PannerRule::linear);
-            break;
-        case BALANCED:
-            panner.setRule(juce::dsp::PannerRule::balanced);
-            break;
-        case SIN3DB:
-            panner.setRule(juce::dsp::PannerRule::sin3dB);
-            break;
-        case SIN4P5DB:
-            panner.setRule(juce::dsp::PannerRule::sin4p5dB);
-            break;
-        case SIN6DB:
-            panner.setRule(juce::dsp::PannerRule::sin6dB);
-            break;
-        case SQUAREROOT3DB:
-            panner.setRule(juce::dsp::PannerRule::squareRoot3dB);
-            break;
-        case SQUAREROOT4P5DB:
-            panner.setRule(juce::dsp::PannerRule::squareRoot4p5dB);
-            break;
-        default:
-            panner.setRule(juce::dsp::PannerRule::linear);
-            break;
-    }
+void True_stereo_pannerAudioProcessor::set_pan_method(panMethod method) {
+    panner.set_pan_method(method);
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout True_stereo_pannerAudioProcessor::createParameters() {

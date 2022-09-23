@@ -35,5 +35,7 @@ private:
     juce::ComboBox panRuleChoice;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> panRuleAttachment;
     
+    juce::ComboBox panMethodChoice;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> panMethodAttachment;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (True_stereo_pannerAudioProcessorEditor)
 };
