@@ -166,7 +166,9 @@ bool True_stereo_pannerAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* True_stereo_pannerAudioProcessor::createEditor()
 {
-    return new True_stereo_pannerAudioProcessorEditor (*this);
+    auto editor = new juce::GenericAudioProcessorEditor(*this);
+    editor->setSize(500, 1500);
+    return editor;
 }
 
 //==============================================================================
@@ -203,9 +205,12 @@ juce::AudioProcessorValueTreeState::ParameterLayout True_stereo_pannerAudioProce
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     juce::AudioProcessorValueTreeState::ParameterLayout paramsLayout;
     
-    params.push_back(std::make_unique<juce::AudioParameterInt> (ParameterID::monoPannerRule, "Mono Panner Rule", 1, 6, 1));
+    params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::panMethod, "Panning Method", juce::StringArray {"Mono", "Stereo", "Binaural"}, 0));
+    params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::monoPannerRule, "Mono Panner Rule", juce::StringArray {"Linear", "Balanced", "Sin3dB", "sin4p5dB", "sin6dB", "squareroot3db", "squareroot4p5db"}, 1));
+    params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::stereoPannerRule, "Stereo Panner Rule", juce::StringArray{"Linear", "Sin3dB"}, 1));
     params.push_back(std::make_unique<juce::AudioParameterFloat> (ParameterID::panValue, "Panning", juce::NormalisableRange<float>(-1.0f, 1.0f, 0.01f), 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterInt> (ParameterID::panMethod, "Panning Method", 1, 3, 1));
+
+
     paramsLayout.add(params.begin(), params.end());
     
     return paramsLayout;

@@ -42,6 +42,10 @@ template <typename SampleType> void Panner<SampleType>::set_mono_panner_rule(juc
     mono_panner.setRule(rule);
 }
 
+template <typename SampleType> void Panner<SampleType>::set_stereo_panner_rule(stereoPannerRule rule) {
+    stereo_panner.set_rule(rule);
+}
+
 template <typename SampleType> void Panner<SampleType>::prepare(juce::dsp::ProcessSpec &spec) {
     mono_panner.prepare(spec);
     stereo_panner.prepare(spec);

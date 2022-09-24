@@ -13,15 +13,15 @@
 True_stereo_pannerAudioProcessorEditor::True_stereo_pannerAudioProcessorEditor (True_stereo_pannerAudioProcessor& p)
     : AudioProcessorEditor (&p), audioProcessor(p), panSlider(), monoPannerRuleChoice("panRule")
 {
-    panSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    panSlider.setRotaryParameters(3*juce::MathConstants<float>::pi/2, juce::MathConstants<float>::pi/2, true);
-    panSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
-    addAndMakeVisible(panSlider);
-    
-    panMethodChoice.addItem("Balanced Knob", MONO_PANNER + 1); // +1 because ID cannot be 0.
-    panMethodChoice.addItem("Stereo Panner", STEREO_PANNER + 1);
-    panMethodChoice.addItem("Binaural Panner", BINAURAL_PANNER + 1);
-    addAndMakeVisible(panMethodChoice);
+//    panSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
+//    panSlider.setRotaryParameters(3*juce::MathConstants<float>::pi/2, juce::MathConstants<float>::pi/2, true);
+//    panSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
+//    addAndMakeVisible(panSlider);
+//
+//    panMethodChoice.addItem("Balanced Knob", MONO_PANNER + 1); // +1 because ID cannot be 0.
+//    panMethodChoice.addItem("Stereo Panner", STEREO_PANNER + 1);
+//    panMethodChoice.addItem("Binaural Panner", BINAURAL_PANNER + 1);
+//    addAndMakeVisible(panMethodChoice);
     
 //    monoPannerRuleChoice.addItem("Linear", MONO_LINEAR + 1);
 //    monoPannerRuleChoice.addItem("Balanced", MONO_BALANCED + 1);
@@ -33,12 +33,13 @@ True_stereo_pannerAudioProcessorEditor::True_stereo_pannerAudioProcessorEditor (
 //
 //    addAndMakeVisible(monoPannerRuleChoice);
     
-    panAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, ParameterID::panValue.getParamID(), panSlider);
-    
-    monoPannerRuleAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.apvts, ParameterID::monoPannerRule.getParamID(), monoPannerRuleChoice);
-    
-    panMethodAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.apvts, ParameterID::panMethod.getParamID(), panMethodChoice);
-    
+//    panAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, ParameterID::panValue.getParamID(), panSlider);
+//
+//    monoPannerRuleAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.apvts, ParameterID::monoPannerRule.getParamID(), monoPannerRuleChoice);
+//
+//    panMethodAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.apvts, ParameterID::panMethod.getParamID(), panMethodChoice);
+//
+
     setSize (400, 300);
 }
 True_stereo_pannerAudioProcessorEditor::~True_stereo_pannerAudioProcessorEditor()

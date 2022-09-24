@@ -21,7 +21,6 @@ typedef enum {
 } panMethod;
 
 typedef enum {
-    MONO_DEFAULT = 0,
     MONO_LINEAR,
     MONO_BALANCED,
     MONO_SIN3DB,
@@ -30,19 +29,6 @@ typedef enum {
     MONO_SQUAREROOT3DB,
     MONO_SQUAREROOT4P5DB
 } monoPannerRule;
-
-typedef enum {
-    STEREO_DEFAULT = 0,
-    STEREO_LINEAR,
-    STEREO_SIN3DB
-} stereoPannerRule;
-
-typedef enum {
-    BINAURAL_DEFAULT = 0,
-    BINAURAL_LINEAR,
-    BINAURAL_SIN3DB
-} binauralPannerRule;
-
 
 template <typename SampleType>
 class Panner {
