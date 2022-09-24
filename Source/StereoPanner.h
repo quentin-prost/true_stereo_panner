@@ -17,7 +17,7 @@ template <typename SampleType> struct stereo_panner_state {
     SampleType gain_rr;
     SampleType gain_lr;
     SampleType gain_rl;
-    SampleType coef_side;
+    SampleType coef_side = static_cast<SampleType(0.5);
     SampleType coef_mid = static_cast<SampleType>(0.5);
 };
 

@@ -25,15 +25,13 @@ public:
     void resized() override;
 
 private:
-    // This reference is provided as a quick way for your editor to
-    // access the processor object that created it.
     True_stereo_pannerAudioProcessor& audioProcessor;
     
-    juce::Slider panSlider;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> panAttachment;
+    juce::Slider panSlider; // Slider object
+    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> panAttachment; // To be able to keep track on the slider value into the apvst of audio processor
     
-    juce::ComboBox panRuleChoice;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> panRuleAttachment;
+    juce::ComboBox monoPannerRuleChoice;
+    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> monoPannerRuleAttachment;
     
     juce::ComboBox panMethodChoice;
     std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> panMethodAttachment;

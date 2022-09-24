@@ -38,6 +38,10 @@ template <typename SampleType> panMethod Panner<SampleType>::get_pan_method() {
     return m_method;
 };
 
+template <typename SampleType> void Panner<SampleType>::set_mono_panner_rule(juce::dsp::PannerRule rule) {
+    mono_panner.setRule(rule);
+}
+
 template <typename SampleType> void Panner<SampleType>::prepare(juce::dsp::ProcessSpec &spec) {
     mono_panner.prepare(spec);
     stereo_panner.prepare(spec);

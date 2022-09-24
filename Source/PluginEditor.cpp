@@ -11,27 +11,33 @@
 
 //==============================================================================
 True_stereo_pannerAudioProcessorEditor::True_stereo_pannerAudioProcessorEditor (True_stereo_pannerAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor(p), panSlider(), panRuleChoice("panRule")
+    : AudioProcessorEditor (&p), audioProcessor(p), panSlider(), monoPannerRuleChoice("panRule")
 {
     panSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-    panSlider.setRotaryParameters(-3*juce::MathConstants<float>::pi/4, 3*juce::MathConstants<float>::pi/4, true);
+    panSlider.setRotaryParameters(3*juce::MathConstants<float>::pi/2, juce::MathConstants<float>::pi/2, true);
     panSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, true, 50, 25);
     addAndMakeVisible(panSlider);
     
-    panRuleChoice.addItem("Linear", MONO_LINEAR + 1);
-    panRuleChoice.addItem("Balanced", MONO_BALANCED + 1);
-    panRuleChoice.addItem("sin3dB", MONO_SIN3DB + 1);
-    panRuleChoice.addItem("sin4p5db", MONO_SIN4P5DB + 1);
-    panRuleChoice.addItem("sin6dB", MONO_SIN6DB + 1);
-    panRuleChoice.addItem("squareroot3dB", MONO_SQUAREROOT3DB + 1);
-    panRuleChoice.addItem("squareroot4p5db", MONO_SQUAREROOT4P5DB + 1);
+    panMethodChoice.addItem("Balanced Knob", MONO_PANNER + 1); // +1 because ID cannot be 0.
+    panMethodChoice.addItem("Stereo Panner", STEREO_PANNER + 1);
+    panMethodChoice.addItem("Binaural Panner", BINAURAL_PANNER + 1);
+    addAndMakeVisible(panMethodChoice);
     
-    addAndMakeVisible(panRuleChoice);
+//    monoPannerRuleChoice.addItem("Linear", MONO_LINEAR + 1);
+//    monoPannerRuleChoice.addItem("Balanced", MONO_BALANCED + 1);
+//    monoPannerRuleChoice.addItem("sin3dB", MONO_SIN3DB + 1);
+//    monoPannerRuleChoice.addItem("sin4p5db", MONO_SIN4P5DB + 1);
+//    monoPannerRuleChoice.addItem("sin6dB", MONO_SIN6DB + 1);
+//    monoPannerRuleChoice.addItem("squareroot3dB", MONO_SQUAREROOT3DB + 1);
+//    monoPannerRuleChoice.addItem("squareroot4p5db", MONO_SQUAREROOT4P5DB + 1);
+//
+//    addAndMakeVisible(monoPannerRuleChoice);
     
-    panAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, "pan", panSlider);
+    panAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(audioProcessor.apvts, ParameterID::panValue.getParamID(), panSlider);
     
-    panRuleAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.apvts, "panrule", panRuleChoice);
+    monoPannerRuleAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.apvts, ParameterID::monoPannerRule.getParamID(), monoPannerRuleChoice);
     
+    panMethodAttachment = std::make_unique<juce::AudioProcessorValueTreeState::ComboBoxAttachment>(audioProcessor.apvts, ParameterID::panMethod.getParamID(), panMethodChoice);
     
     setSize (400, 300);
 }
@@ -47,11 +53,10 @@ void True_stereo_pannerAudioProcessorEditor::paint (juce::Graphics& g)
 
     g.setColour (juce::Colours::white);
     g.setFont (15.0f);
-    g.drawFittedText ("Hello World!", getLocalBounds(), juce::Justification::centred, 1);
 }
 
 void True_stereo_pannerAudioProcessorEditor::resized()
 {
     panSlider.setBounds(getWidth() / 2 - 100, getHeight() / 2 - 50, 200, 100);
-    panRuleChoice.setBounds(panSlider.getX(), panSlider.getY() - 50, 200, 50);
+    panMethodChoice.setBounds(panSlider.getX(), panSlider.getY() - 50, 200, 50);
 }

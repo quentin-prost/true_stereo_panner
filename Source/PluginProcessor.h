@@ -10,6 +10,17 @@
 
 #include "Panner.h"
 
+namespace ParameterID
+{
+#define PARAMETER_ID(str) const juce::ParameterID str(#str, 1);
+    PARAMETER_ID(panValue)
+    PARAMETER_ID(panMethod)
+    PARAMETER_ID(widthValue)
+    PARAMETER_ID(monoPannerRule)
+    PARAMETER_ID(stereoPannerRule)
+    PARAMETER_ID(binauralPannerRule)
+    
+}
 
 class True_stereo_pannerAudioProcessor  : public juce::AudioProcessor
                             #if JucePlugin_Enable_ARA
@@ -58,6 +69,7 @@ public:
     void set_pan(float pan);
     
     juce::AudioProcessorValueTreeState apvts;
+    //juce::LinearSmoothedValue<double> ;
 private:
     Panner<float> panner;
     panMethod method;

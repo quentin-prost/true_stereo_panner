@@ -22,6 +22,8 @@ True_stereo_pannerAudioProcessor::True_stereo_pannerAudioProcessor()
                        ), apvts(*this, nullptr, "Parameters", createParameters()), panner()
 #endif
 {
+    set_pan_method(MONO_PANNER);
+    set_pan(0.0f);
 }
 
 True_stereo_pannerAudioProcessor::~True_stereo_pannerAudioProcessor()
@@ -140,8 +142,19 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
 
     auto audioBlock = juce::dsp::AudioBlock<float> (buffer);
     auto processContext = juce::dsp::ProcessContextReplacing<float> (audioBlock);
-    panner.set_pan(apvts.getRawParameterValue("pan")->load());
-    //this->setPanType((panning_type)(apvts.getRawParameterValue("panrule")->load()));
+    
+    set_pan_method((panMethod)(apvts.getRawParameterValue(ParameterID::panMethod.getParamID())->load()));
+    switch (method) {
+        case MONO_PANNER:
+            panner.set_mono_panner_rule((juce::dsp::PannerRule)(apvts.getRawParameterValue(ParameterID::monoPannerRule.getParamID())->load()));
+            break;
+        case STEREO_PANNER:
+            break;
+        default:
+            break;
+    }
+    
+    panner.set_pan(apvts.getRawParameterValue(ParameterID::panValue.getParamID())->load());
     panner.process(processContext);
 }
 
@@ -190,9 +203,9 @@ juce::AudioProcessorValueTreeState::ParameterLayout True_stereo_pannerAudioProce
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     juce::AudioProcessorValueTreeState::ParameterLayout paramsLayout;
     
-    params.push_back(std::make_unique<juce::AudioParameterInt> ("panrule", "Panning Rule", 1, 6, 1));
-    params.push_back(std::make_unique<juce::AudioParameterFloat> ("pan", "Panning", juce::NormalisableRange<float>(-1.0f, 1.0f, 0.01f), 0.0f));
-    params.push_back(std::make_unique<juce::AudioParameterBool> ("reset", "Reset", false));
+    params.push_back(std::make_unique<juce::AudioParameterInt> (ParameterID::monoPannerRule, "Mono Panner Rule", 1, 6, 1));
+    params.push_back(std::make_unique<juce::AudioParameterFloat> (ParameterID::panValue, "Panning", juce::NormalisableRange<float>(-1.0f, 1.0f, 0.01f), 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterInt> (ParameterID::panMethod, "Panning Method", 1, 3, 1));
     paramsLayout.add(params.begin(), params.end());
     
     return paramsLayout;
