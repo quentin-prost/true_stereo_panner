@@ -10,7 +10,7 @@
 
 #include "StereoPanner.h"
 
-template <class SampleType> StereoPanner<SampleType>::StereoPanner() {
+template <typename SampleType> StereoPanner<SampleType>::StereoPanner() {
     m_state.gain_ll = static_cast<SampleType>(1.0);
     m_state.gain_rr = static_cast<SampleType>(1.0);
     m_state.gain_lr = static_cast<SampleType>(0.0);
@@ -56,21 +56,23 @@ template <class SampleType> float StereoPanner<SampleType>::get_pan() {
 }
 
 template <class SampleType> void StereoPanner<SampleType>::process(const juce::dsp::ProcessContextReplacing<SampleType> &context) {
-    auto input_left = context.getInputBlock().getSingleChannelBlock(0);
-    auto input_right = context.getInputBlock().getSingleChannelBlock(1);
-    auto output_left = context.getSingleOutputChannel(0);
-    auto output_right = context.getSingleOutputChannel(1);
+    juce::dsp::AudioBlock<SampleType> output = context.getOutputBlock();
     if (!context.isBypassed) {
-        output_left = input_left.multiplyBy(m_state.gain_ll) + input_right.multiplyBy(m_state.gain_lr); // left channel processing
-        output_right = input_right.multiplyBy(m_state.gain_rr) + input_left.multiplyBy(m_state.gain_rl); // right channel processing
-        
-        // Width parameters
-        auto mid = (output_left + output_right)*m_state.coef_mid;
-        auto side = (output_left - output_right)*m_state.coef_side;
-        output_left = (mid + side);
-        output_right = (mid - side);
+        for (auto sample = 0; sample < m_spec.maximumBlockSize; sample ++) {
+            SampleType outputLeft = context.getInputBlock().getSample(0, sample) * m_state.gain_ll + context.getInputBlock().getSample(1, sample) * m_state.gain_lr;
+            SampleType outputRight = context.getInputBlock().getSample(1, sample) * m_state.gain_rr + context.getInputBlock().getSample(0, sample) * m_state.gain_rl;
+            
+            SampleType mid = (outputLeft + outputRight)*m_state.coef_mid;
+            SampleType side = (outputLeft - outputRight)*m_state.coef_side;
+            
+            output.setSample(0, sample, mid + side);
+            output.setSample(1, sample, mid - side);
+        }
     } else {
-        context.getOutputBlock() = context.getInputBlock();
+        output.copyFrom(context.getInputBlock());
     }
 }
+
+template class StereoPanner<float>;
+template class StereoPanner<double>;
 

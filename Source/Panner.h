@@ -44,39 +44,38 @@ typedef enum {
 } binauralPannerRule;
 
 
-template <typename SampleType> class Panner {
-    
-public:
-    Panner();
-    ~Panner();
-    
-    void process_panner(const juce::dsp::ProcessContextNonReplacing<SampleType> &context);
-    
-    void set_pan_method(panMethod type);
-    panMethod get_pan_method();
-    
-    void set_pan(float pan);
-    float get_pan();
-    
-    void set_width(float width);
-    float get_width();
-    
-    void set_mono_panner_rule(juce::dsp::PannerRule rule);
-    monoPannerRule get_mono_panner_rule();
-    
-    void set_stereo_panner_rule(stereoPannerRule rule);
-    stereoPannerRule get_stereo_panner_rule(stereoPannerRule rule);
-    
-    void set_binaural_panner_rule(binauralPannerRule rule);
-    binauralPannerRule get_binaural_panner_rule();
-    
-    void prepare(juce::dsp::ProcessSpec &spec);
-    void process(juce::dsp::ProcessContextReplacing<SampleType> &context);
-private:
-    float m_pan, m_width;
-    panMethod m_method;
-    juce::dsp::Panner<SampleType> mono_panner;
-    StereoPanner<SampleType> stereo_panner;
-    //BinauralPanner<SampleType> binaural_panner;
-    
+template <typename SampleType>
+class Panner {
+    public:
+        Panner();
+        ~Panner();
+        
+        void process_panner(const juce::dsp::ProcessContextNonReplacing<SampleType> &context);
+        
+        void set_pan_method(panMethod type);
+        panMethod get_pan_method();
+        
+        void set_pan(float pan);
+        
+        void set_width(float width);
+        float get_width();
+        
+        void set_mono_panner_rule(juce::dsp::PannerRule rule);
+        monoPannerRule get_mono_panner_rule();
+        
+        void set_stereo_panner_rule(stereoPannerRule rule);
+        stereoPannerRule get_stereo_panner_rule(stereoPannerRule rule);
+        
+        void set_binaural_panner_rule(binauralPannerRule rule);
+        binauralPannerRule get_binaural_panner_rule();
+        
+        void prepare(juce::dsp::ProcessSpec &spec);
+        void process(juce::dsp::ProcessContextReplacing<SampleType> &context);
+    private:
+        float m_pan, m_width;
+        panMethod m_method;
+        juce::dsp::Panner<SampleType> mono_panner;
+        StereoPanner<SampleType> stereo_panner;
+        //BinauralPanner<SampleType> binaural_panner;
+        
 };

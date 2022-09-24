@@ -10,11 +10,11 @@
 
 #include "Panner.h"
 
-template <class SampleType> Panner<SampleType>::Panner() {}
+template <typename SampleType> Panner<SampleType>::Panner() {}
 
-template <class SampleType> Panner<SampleType>::~Panner() {}
+template <typename SampleType> Panner<SampleType>::~Panner() {}
 
-template <class SampleType> void Panner<SampleType>::set_pan(float pan) {
+template <typename SampleType> void Panner<SampleType>::set_pan(float pan) {
     
     switch (m_method) {
         case MONO_PANNER:
@@ -30,35 +30,20 @@ template <class SampleType> void Panner<SampleType>::set_pan(float pan) {
     }
 }
 
-template <class SampleType> float Panner<SampleType>::get_pan() {
-
-    switch (m_method) {
-        case MONO_PANNER:
-            return mono_panner.getPan(m_pan);
-        case STEREO_PANNER:
-            return stereo_panner.get_pan(m_pan);
-            break;
-        case BINAURAL_PANNER:
-            break;
-        default:
-            break;
-    }
-}
-
-template <class SampleType> void Panner<SampleType>::set_pan_method(panMethod method) {
+template <typename SampleType> void Panner<SampleType>::set_pan_method(panMethod method) {
     m_method = method;
 };
 
-template <class SampleType> panMethod Panner<SampleType>::get_pan_method() {
+template <typename SampleType> panMethod Panner<SampleType>::get_pan_method() {
     return m_method;
 };
 
-template <class SampleType> void Panner<SampleType>::prepare(juce::dsp::ProcessSpec &spec) {
+template <typename SampleType> void Panner<SampleType>::prepare(juce::dsp::ProcessSpec &spec) {
     mono_panner.prepare(spec);
     stereo_panner.prepare(spec);
 }
 
-template <class SampleType> void Panner<SampleType>::process(juce::dsp::ProcessContextReplacing<SampleType> &context) {
+template <typename SampleType> void Panner<SampleType>::process(juce::dsp::ProcessContextReplacing<SampleType> &context) {
     
     switch (m_method) {
         case MONO_PANNER:
@@ -76,3 +61,5 @@ template <class SampleType> void Panner<SampleType>::process(juce::dsp::ProcessC
 };
 
 
+template class Panner<float>;
+template class Panner<double>;
