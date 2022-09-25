@@ -36,6 +36,7 @@ template <typename SampleType> void StereoPanner<SampleType>::reset() {
     m_state.gain_rl.reset(m_spec.maximumBlockSize);
     m_state.coef_mid.reset(m_spec.maximumBlockSize);
     m_state.coef_side.reset(m_spec.maximumBlockSize); // State coefficient will interpolate only over one block
+    set_pan(0.0);
 }
 
 template <typename SampleType> void StereoPanner<SampleType>::set_width(float width) {
@@ -52,8 +53,7 @@ template <typename SampleType> float StereoPanner<SampleType>::get_width() {
 
 template <typename SampleType> void StereoPanner<SampleType>::set_pan(float pan) {
     SampleType x;
-    if (pan < -1.0f) pan = -1.0f;
-    if (pan > 1.0f) pan = 1.0f;
+    juce::jlimit(-1.0f, 1.0f, pan);
     
     switch (m_rule) {
         case STEREO_LINEAR:
@@ -102,7 +102,7 @@ template <typename SampleType> void StereoPanner<SampleType>::set_rule(stereoPan
 template <typename SampleType> void StereoPanner<SampleType>::process(const juce::dsp::ProcessContextReplacing<SampleType> &context) {
     juce::dsp::AudioBlock<SampleType> output = context.getOutputBlock();
     if (!context.isBypassed) {
-        for (auto sample = 0; sample < m_spec.maximumBlockSize; sample++) {
+        for (auto sample = 0; sample < output.getNumSamples(); sample++) {
             SampleType mid = (context.getInputBlock().getSample(0, sample) + context.getInputBlock().getSample(1, sample))*m_state.coef_mid.getNextValue();
             SampleType side = (context.getInputBlock().getSample(0, sample) - context.getInputBlock().getSample(1, sample))*m_state.coef_side.getNextValue();
             

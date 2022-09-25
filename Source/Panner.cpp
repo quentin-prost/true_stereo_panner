@@ -35,16 +35,8 @@ template <typename SampleType> void Panner<SampleType>::set_width(float width) {
     m_width = width;
 }
 
-template <typename SampleType> float Panner<SampleType>::get_width() {
-    return m_width;
-}
-
 template <typename SampleType> void Panner<SampleType>::set_pan_method(panMethod method) {
     m_method = method;
-};
-
-template <typename SampleType> panMethod Panner<SampleType>::get_pan_method() {
-    return m_method;
 };
 
 template <typename SampleType> void Panner<SampleType>::set_mono_panner_rule(juce::dsp::PannerRule rule) {
@@ -58,9 +50,17 @@ template <typename SampleType> void Panner<SampleType>::set_stereo_panner_rule(s
 template <typename SampleType> void Panner<SampleType>::prepare(juce::dsp::ProcessSpec &spec) {
     mono_panner.prepare(spec);
     stereo_panner.prepare(spec);
+    lfo.prepare_lfo(spec);
 }
 
 template <typename SampleType> void Panner<SampleType>::process(juce::dsp::ProcessContextReplacing<SampleType> &context) {
+    SampleType output_lfo;
+    
+    if (is_lfo_active) {
+        output_lfo = lfo.process_lfo(0.0f);
+        float modulated_pan = m_pan + output_lfo * m_lfo_amount;
+        set_pan(modulated_pan);
+    }
     
     switch (m_method) {
         case MONO_PANNER:
@@ -72,7 +72,7 @@ template <typename SampleType> void Panner<SampleType>::process(juce::dsp::Proce
 //        case BINAURAL_PANNER:
 //            //process_binaural_pan(context);
         default:
-            jassert("Wrong type panning");
+            jassertfalse;
             break;
     }
 };

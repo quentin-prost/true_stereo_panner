@@ -13,12 +13,6 @@
 #include <JuceHeader.h>
 
 template <typename SampleType> struct stereo_panner_state {
-//    SampleType gain_ll;
-//    SampleType gain_rr;
-//    SampleType gain_lr;
-//    SampleType gain_rl;
-//    SampleType coef_side = static_cast<SampleType>(0.5);
-//    SampleType coef_mid = static_cast<SampleType>(0.5);
     juce::SmoothedValue<SampleType> gain_ll;
     juce::SmoothedValue<SampleType> gain_rr;
     juce::SmoothedValue<SampleType> gain_lr;
