@@ -69,7 +69,7 @@ template <typename SampleType> void StereoPanner<SampleType>::set_pan(float pan)
             }
             break;
         case STEREO_SIN3DB:
-            x = static_cast<SampleType>(juce::MathConstants<SampleType>::pi/4 * (1 + pan));
+            x = static_cast<SampleType>(juce::MathConstants<SampleType>::pi/4 * (1 - pan));
             m_state.gain_ll.setTargetValue(static_cast<SampleType>(std::sin(x)));
             m_state.gain_rr.setTargetValue(static_cast<SampleType>(std::cos(x)));
             if (pan < 0.0f) { // Add contribution of right channel into left channel only for negative panning
