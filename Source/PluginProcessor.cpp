@@ -272,12 +272,17 @@ void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& para
     }
     
     if (paramID == ParameterID::lfoRateHz.getParamID()) {
-        panner.set_lfo_rate_hz(newValue);
+        // freq of the LFO is multiplied by fs/block_size because we increment
+        // the lfo output value only at every processBlock() call, which is enough
+        // for a lfo with a max freq rate of 10Hz.
+        float freq = newValue * (getSampleRate() / getBlockSize());
+        panner.set_lfo_rate_hz(freq);
         return;
     }
     
     if (paramID == ParameterID::lfoRateSync.getParamID()) {
         float rate_in_hz = get_rate_in_hz(static_cast<sync_rate_t>(newValue));
+        float freq = rate_in_hz * (getSampleRate() / getBlockSize() );
         panner.set_lfo_rate_hz(rate_in_hz);
         return;
     }
@@ -291,7 +296,16 @@ void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& para
 float True_stereo_pannerAudioProcessor::get_rate_in_hz(sync_rate_t rate) {
     float rate_hz;
     float bpm = current_position_info.bpm;
+    if (bpm <= __FLT_EPSILON__) jassertfalse;
+    DBG(rate);
+    //DBG(bpm);
     switch (rate) {
+        case T1_64: rate_hz = 64.0f * bpm / 60.0f;
+            break;
+        case T1_48: rate_hz = 48.0f * bpm / 60.0f;
+            break;
+        case T1_32: rate_hz = 32.0f * bpm / 60.0f;
+            break;
         case T1_16: rate_hz = 16.0f * bpm / 60.0f;
             break;
         case T1_12: rate_hz = 12.0f * bpm / 60.0f;
@@ -308,11 +322,11 @@ float True_stereo_pannerAudioProcessor::get_rate_in_hz(sync_rate_t rate) {
             break;
         case T1_1: rate_hz = 1.0f * bpm / 60.0f;
             break;
-        case T2_1: rate_hz = 0.5f * bpm / 60.0f;
+        case T2_1: rate_hz = (1/2.0f) * bpm / 60.0f;
             break;
         case T3_1: rate_hz = (1/3.0f) * bpm / 60.0f;
             break;
-        case T4_1: rate_hz = (1/2.0f) * bpm / 60.0f;
+        case T4_1: rate_hz = (1/4.0f) * bpm / 60.0f;
             break;
         case T8_1: rate_hz = (1/8.0f) * bpm / 60.0f;
             break;

@@ -24,7 +24,7 @@ typedef enum {
 class Lfo : juce::dsp::Oscillator<float> {
 public:
     
-    Lfo() {};
+    Lfo(): m_rate(1.0f), m_amount(0.0f), m_waveform(SINE) {};
     ~Lfo() {};
     
     void prepare_lfo(juce::dsp::ProcessSpec& spec);
@@ -35,7 +35,8 @@ public:
     
     float process_lfo(float input);
 private:
-    float m_amount;
-    waveform_t m_waveform;
+    float m_amount = 0.0f;
+    float m_rate = 1.0f;
+    waveform_t m_waveform = SINE;
 };
 

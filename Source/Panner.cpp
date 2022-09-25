@@ -59,7 +59,7 @@ template <typename SampleType> void Panner<SampleType>::process(juce::dsp::Proce
     if (is_lfo_active) {
         output_lfo = lfo.process_lfo(0.0f);
         float modulated_pan = m_pan + output_lfo * m_lfo_amount;
-        juce::jlimit(-0.9999999f, 0.9999999f, modulated_pan);
+        juce::jlimit(static_cast<SampleType>(-1.0), static_cast<SampleType>(1.0), static_cast<SampleType>(modulated_pan));
         set_pan(modulated_pan);
         DBG(modulated_pan);
     }

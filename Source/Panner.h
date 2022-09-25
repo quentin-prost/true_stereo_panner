@@ -49,7 +49,7 @@ public:
     void set_stereo_width(float width);
     void set_lfo_active(bool active) { is_lfo_active = active; };
     void set_lfo_rate_hz(float rate) {
-        juce::jlimit(0.01f, 20.0f, rate);
+        //juce::jlimit(0.01f, 20.0f, rate);
         m_lfo_rate = rate;
         lfo.set_lfo_rate(m_lfo_rate);
     };
