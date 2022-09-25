@@ -38,7 +38,7 @@ public:
     ~StereoPanner();
     
     void prepare(const juce::dsp::ProcessSpec &spec);
-    void reset();
+    void reset();  
     void set_width(float width);
     float get_width();
     void set_pan(float pan);

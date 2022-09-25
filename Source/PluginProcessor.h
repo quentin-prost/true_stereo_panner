@@ -18,11 +18,17 @@ namespace ParameterID
     PARAMETER_ID(widthValue)
     PARAMETER_ID(monoPannerRule)
     PARAMETER_ID(stereoPannerRule)
-    PARAMETER_ID(binauralPannerRule)
-    
+    //PARAMETER_ID(binauralPannerRule)
 }
 
-class True_stereo_pannerAudioProcessor  : public juce::AudioProcessor
+template <typename T>
+inline static void castParameter(juce::AudioProcessorValueTreeState& apvts, const juce::ParameterID& Id, T& dest) {
+    dest = dynamic_cast<T>(apvts.getParameter(Id.getParamID()));
+    jassert(dest);
+}
+
+class True_stereo_pannerAudioProcessor  : public juce::AudioProcessor,
+                                          public juce::AudioProcessorValueTreeState::Listener
                             #if JucePlugin_Enable_ARA
                              , public juce::AudioProcessorARAExtension
                             #endif
@@ -69,17 +75,26 @@ public:
     void set_pan(float pan);
     
     juce::AudioProcessorValueTreeState apvts;
-    //juce::LinearSmoothedValue<double> ;
 private:
     Panner<float> panner;
-    panMethod m_method;
-    monoPannerRule m_mono_rule;
-    stereoPannerRule m_stereo_rule;
-    binauralPannerRule m_binaural_rule;
-    float m_pan, m_width;
+    panMethod m_method = MONO_PANNER;
+    monoPannerRule m_mono_rule = MONO_LINEAR;
+    stereoPannerRule m_stereo_rule = STEREO_LINEAR;
+    //binauralPannerRule m_binaural_rule;
+    float m_pan = 0.0f;
+    float m_width = 0.0f;
     
     // Editor //
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
+    juce::AudioParameterFloat* pan_param;
+    juce::AudioParameterFloat* width_param;
+    juce::AudioParameterChoice* pan_method_param;
+    juce::AudioParameterChoice* mono_rule_param;
+    juce::AudioParameterChoice* stereo_rule_param;
+    
+    //std::atomic<bool> parametersChanged { false };
+    void parameterChanged(const juce::String& parameterID, float newValue) override;
+    
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (True_stereo_pannerAudioProcessor)
 };

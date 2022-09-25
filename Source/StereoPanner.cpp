@@ -70,13 +70,13 @@ template <typename SampleType> void StereoPanner<SampleType>::set_pan(float pan)
             break;
         case STEREO_SIN3DB:
             x = static_cast<SampleType>(juce::MathConstants<SampleType>::pi/4 * (1 + pan));
-            m_state.gain_ll.setTargetValue(static_cast<SampleType>(sin(x)));
-            m_state.gain_rr.setTargetValue(static_cast<SampleType>(cos(x)));
+            m_state.gain_ll.setTargetValue(static_cast<SampleType>(std::sin(x)));
+            m_state.gain_rr.setTargetValue(static_cast<SampleType>(std::cos(x)));
             if (pan < 0.0f) { // Add contribution of right channel into left channel only for negative panning
                 m_state.gain_lr.setTargetValue(static_cast<SampleType>(0.0f));
-                m_state.gain_rl.setTargetValue(static_cast<SampleType>(-sin(juce::MathConstants<SampleType>::pi/4 * pan)));
+                m_state.gain_rl.setTargetValue(static_cast<SampleType>(-std::sin(juce::MathConstants<SampleType>::pi/4 * pan)));
             } else { // Add contribuition of left channel into right channel only for positive panning
-                m_state.gain_lr.setTargetValue(static_cast<SampleType>(sin(juce::MathConstants<SampleType>::pi/4 * pan)));
+                m_state.gain_lr.setTargetValue(static_cast<SampleType>(std::sin(juce::MathConstants<SampleType>::pi/4 * pan)));
                 m_state.gain_rl.setTargetValue(static_cast<SampleType>(0.0f));
             }
             break;
@@ -87,10 +87,6 @@ template <typename SampleType> void StereoPanner<SampleType>::set_pan(float pan)
     
     m_pan = pan;
     
-    std::cout << "gain_ll: " << m_state.gain_ll.getCurrentValue() << "\n";
-    std::cout << "gain_rr: " << m_state.gain_rr.getCurrentValue() << "\n";
-    std::cout << "gain_lr: " << m_state.gain_lr.getCurrentValue() << "\n";
-    std::cout << "gain_rl: " << m_state.gain_rl.getCurrentValue() << "\n";
 }
 
 template <typename SampleType> float StereoPanner<SampleType>::get_pan_target() {

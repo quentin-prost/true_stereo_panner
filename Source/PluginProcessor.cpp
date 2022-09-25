@@ -22,12 +22,21 @@ True_stereo_pannerAudioProcessor::True_stereo_pannerAudioProcessor()
                        ), apvts(*this, nullptr, "Parameters", createParameters()), panner()
 #endif
 {
-    set_pan_method(MONO_PANNER);
-    set_pan(0.0f);
+    // Initilisation of the audio parameters pointers
+    castParameter(apvts, ParameterID::panValue, pan_param);
+    castParameter(apvts, ParameterID::panMethod, pan_method_param);
+    castParameter(apvts, ParameterID::widthValue, width_param);
+    castParameter(apvts, ParameterID::monoPannerRule, mono_rule_param);
+    castParameter(apvts, ParameterID::stereoPannerRule, stereo_rule_param);
+    
+    apvts.addParameterListener(ParameterID::panValue.getParamID(), this);
+    apvts.addParameterListener(ParameterID::widthValue.getParamID(), this);
 }
 
 True_stereo_pannerAudioProcessor::~True_stereo_pannerAudioProcessor()
 {
+    apvts.removeParameterListener(ParameterID::panValue.getParamID(), this);
+    apvts.removeParameterListener(ParameterID::widthValue.getParamID(), this);
 }
 
 //==============================================================================
@@ -143,21 +152,18 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     auto audioBlock = juce::dsp::AudioBlock<float> (buffer);
     auto processContext = juce::dsp::ProcessContextReplacing<float> (audioBlock);
     
-    set_pan_method((panMethod)(apvts.getRawParameterValue(ParameterID::panMethod.getParamID())->load()));
+    set_pan_method((panMethod) pan_method_param->getIndex());
     
     switch (m_method) {
         case MONO_PANNER:
-            panner.set_mono_panner_rule((juce::dsp::PannerRule)(apvts.getRawParameterValue(ParameterID::monoPannerRule.getParamID())->load()));
+            panner.set_mono_panner_rule((juce::dsp::PannerRule) mono_rule_param->getIndex());
             break;
         case STEREO_PANNER:
-            panner.set_stereo_panner_rule((stereoPannerRule)(apvts.getRawParameterValue(ParameterID::stereoPannerRule.getParamID())->load()));
-            panner.set_width(apvts.getRawParameterValue(ParameterID::widthValue.getParamID())->load());
+            panner.set_stereo_panner_rule((stereoPannerRule) stereo_rule_param->getIndex());
             break;
         default:
             break;
     }
-    
-    panner.set_pan(apvts.getRawParameterValue(ParameterID::panValue.getParamID())->load());
     panner.process(processContext);
 }
 
@@ -170,7 +176,7 @@ bool True_stereo_pannerAudioProcessor::hasEditor() const
 juce::AudioProcessorEditor* True_stereo_pannerAudioProcessor::createEditor()
 {
     auto editor = new juce::GenericAudioProcessorEditor(*this);
-    editor->setSize(500, 1500);
+    editor->setSize(500, 750);
     return editor;
 }
 
@@ -220,4 +226,16 @@ juce::AudioProcessorValueTreeState::ParameterLayout True_stereo_pannerAudioProce
     paramsLayout.add(params.begin(), params.end());
     
     return paramsLayout;
+}
+
+void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& paramID, float newValue) {
+    if (paramID == ParameterID::panValue.getParamID()) {
+        panner.set_pan(newValue);
+        return;
+    }
+    
+    if (paramID == ParameterID::widthValue.getParamID()) {
+        panner.set_width(newValue);
+        return;
+    }
 }
