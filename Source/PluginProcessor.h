@@ -9,6 +9,7 @@
 #pragma once
 
 #include "Panner.h"
+#include "Utilities.h"
 
 namespace ParameterID
 {

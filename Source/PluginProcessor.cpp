@@ -182,6 +182,9 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
             break;
     }
     panner.process(processContext);
+    
+    limitOutput(buffer.getWritePointer(0), buffer.getNumSamples());
+    limitOutput(buffer.getWritePointer(1), buffer.getNumSamples());
 }
 
 //==============================================================================
