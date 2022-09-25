@@ -260,7 +260,9 @@ void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& para
     }
     
     if (paramID == ParameterID::widthValue.getParamID()) {
-        panner.set_width(newValue);
+        DBG("newValue");
+        DBG(newValue);
+        panner.set_stereo_width(newValue);
         return;
     }
     

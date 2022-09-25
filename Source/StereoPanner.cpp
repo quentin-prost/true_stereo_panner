@@ -36,7 +36,6 @@ template <typename SampleType> void StereoPanner<SampleType>::reset() {
     m_state.gain_rl.reset(m_spec.maximumBlockSize);
     m_state.coef_mid.reset(m_spec.maximumBlockSize);
     m_state.coef_side.reset(m_spec.maximumBlockSize); // State coefficient will interpolate only over one block
-    set_pan(0.0);
 }
 
 template <typename SampleType> void StereoPanner<SampleType>::set_width(float width) {
@@ -45,6 +44,7 @@ template <typename SampleType> void StereoPanner<SampleType>::set_width(float wi
     float temp = 1.0f / std::max((float)(1.0f + width), (float)2.0f);
     m_state.coef_mid.setTargetValue(static_cast<SampleType>(temp));
     m_state.coef_side.setTargetValue(static_cast<SampleType>(temp * width));
+    m_width = width;
 }
 
 template <typename SampleType> float StereoPanner<SampleType>::get_width() {
@@ -95,8 +95,6 @@ template <typename SampleType> float StereoPanner<SampleType>::get_pan_target() 
 
 template <typename SampleType> void StereoPanner<SampleType>::set_rule(stereoPannerRule rule) {
     m_rule = rule;
-    set_pan(m_pan);
-    set_width(m_width);
 }
 
 template <typename SampleType> void StereoPanner<SampleType>::process(const juce::dsp::ProcessContextReplacing<SampleType> &context) {
@@ -108,6 +106,11 @@ template <typename SampleType> void StereoPanner<SampleType>::process(const juce
             
             SampleType outputLeft = (mid + side) * m_state.gain_ll.getNextValue() + (mid - side) * m_state.gain_rl.getNextValue();
             SampleType outputRight = (mid - side) * m_state.gain_rr.getNextValue() + (mid + side) * m_state.gain_lr.getNextValue();
+            
+            DBG("Coef mid");
+            DBG(m_state.coef_mid.getCurrentValue());
+            DBG("Coef side");
+            DBG(m_state.coef_side.getCurrentValue());
             
             output.setSample(0, sample, outputLeft);
             output.setSample(1, sample, outputRight);

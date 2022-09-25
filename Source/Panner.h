@@ -46,7 +46,7 @@ public:
     void set_pan_method(panMethod type);
     panMethod get_pan_method() { return m_method; };
     void set_pan(float pan);
-    void set_width(float width);
+    void set_stereo_width(float width);
     void set_lfo_active(bool active) { is_lfo_active = active; };
     void set_lfo_rate_hz(float rate) {
         juce::jlimit(0.01f, 20.0f, rate);

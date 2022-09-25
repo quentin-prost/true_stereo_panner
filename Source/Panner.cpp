@@ -30,7 +30,7 @@ template <typename SampleType> void Panner<SampleType>::set_pan(float pan) {
     }
 }
 
-template <typename SampleType> void Panner<SampleType>::set_width(float width) {
+template <typename SampleType> void Panner<SampleType>::set_stereo_width(float width) {
     stereo_panner.set_width(width);
     m_width = width;
 }
@@ -59,7 +59,9 @@ template <typename SampleType> void Panner<SampleType>::process(juce::dsp::Proce
     if (is_lfo_active) {
         output_lfo = lfo.process_lfo(0.0f);
         float modulated_pan = m_pan + output_lfo * m_lfo_amount;
+        juce::jlimit(-0.9999999f, 0.9999999f, modulated_pan);
         set_pan(modulated_pan);
+        DBG(modulated_pan);
     }
     
     switch (m_method) {
