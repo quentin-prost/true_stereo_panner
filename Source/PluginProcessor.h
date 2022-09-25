@@ -72,11 +72,11 @@ public:
     //juce::LinearSmoothedValue<double> ;
 private:
     Panner<float> panner;
-    panMethod method;
-    monoPannerRule mono_rule;
-    stereoPannerRule stereo_rule;
-    binauralPannerRule binaural_rule;
-    float pan, width;
+    panMethod m_method;
+    monoPannerRule m_mono_rule;
+    stereoPannerRule m_stereo_rule;
+    binauralPannerRule m_binaural_rule;
+    float m_pan, m_width;
     
     // Editor //
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();

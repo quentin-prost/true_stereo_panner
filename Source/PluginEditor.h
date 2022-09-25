@@ -27,13 +27,13 @@ public:
 private:
     True_stereo_pannerAudioProcessor& audioProcessor;
     
-    juce::Slider panSlider; // Slider object
-    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> panAttachment; // To be able to keep track on the slider value into the apvst of audio processor
-    
-    juce::ComboBox monoPannerRuleChoice;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> monoPannerRuleAttachment;
-    
-    juce::ComboBox panMethodChoice;
-    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> panMethodAttachment;
+//    juce::Slider panSlider; // Slider object
+//    std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> panAttachment; // To be able to keep track on the slider value into the apvst of audio processor
+//
+//    juce::ComboBox monoPannerRuleChoice;
+//    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> monoPannerRuleAttachment;
+//
+//    juce::ComboBox panMethodChoice;
+//    std::unique_ptr<juce::AudioProcessorValueTreeState::ComboBoxAttachment> panMethodAttachment;
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (True_stereo_pannerAudioProcessorEditor)
 };

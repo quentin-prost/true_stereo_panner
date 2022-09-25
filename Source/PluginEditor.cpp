@@ -11,7 +11,7 @@
 
 //==============================================================================
 True_stereo_pannerAudioProcessorEditor::True_stereo_pannerAudioProcessorEditor (True_stereo_pannerAudioProcessor& p)
-    : AudioProcessorEditor (&p), audioProcessor(p), panSlider(), monoPannerRuleChoice("panRule")
+    : AudioProcessorEditor (&p), audioProcessor(p)
 {
 //    panSlider.setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
 //    panSlider.setRotaryParameters(3*juce::MathConstants<float>::pi/2, juce::MathConstants<float>::pi/2, true);
@@ -58,6 +58,6 @@ void True_stereo_pannerAudioProcessorEditor::paint (juce::Graphics& g)
 
 void True_stereo_pannerAudioProcessorEditor::resized()
 {
-    panSlider.setBounds(getWidth() / 2 - 100, getHeight() / 2 - 50, 200, 100);
-    panMethodChoice.setBounds(panSlider.getX(), panSlider.getY() - 50, 200, 50);
+    //panSlider.setBounds(getWidth() / 2 - 100, getHeight() / 2 - 50, 200, 100);
+    //panMethodChoice.setBounds(panSlider.getX(), panSlider.getY() - 50, 200, 50);
 }

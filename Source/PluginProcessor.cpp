@@ -144,11 +144,14 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     auto processContext = juce::dsp::ProcessContextReplacing<float> (audioBlock);
     
     set_pan_method((panMethod)(apvts.getRawParameterValue(ParameterID::panMethod.getParamID())->load()));
-    switch (method) {
+    
+    switch (m_method) {
         case MONO_PANNER:
             panner.set_mono_panner_rule((juce::dsp::PannerRule)(apvts.getRawParameterValue(ParameterID::monoPannerRule.getParamID())->load()));
             break;
         case STEREO_PANNER:
+            panner.set_stereo_panner_rule((stereoPannerRule)(apvts.getRawParameterValue(ParameterID::stereoPannerRule.getParamID())->load()));
+            panner.set_width(apvts.getRawParameterValue(ParameterID::widthValue.getParamID())->load());
             break;
         default:
             break;
@@ -193,11 +196,13 @@ juce::AudioProcessor* JUCE_CALLTYPE createPluginFilter()
 }
 
 void True_stereo_pannerAudioProcessor::set_pan(float pan) {
+    m_pan = pan;
     panner.set_pan(pan);
 }
 
 void True_stereo_pannerAudioProcessor::set_pan_method(panMethod method) {
     panner.set_pan_method(method);
+    m_method = method;
 }
 
 juce::AudioProcessorValueTreeState::ParameterLayout True_stereo_pannerAudioProcessor::createParameters() {
@@ -206,9 +211,10 @@ juce::AudioProcessorValueTreeState::ParameterLayout True_stereo_pannerAudioProce
     juce::AudioProcessorValueTreeState::ParameterLayout paramsLayout;
     
     params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::panMethod, "Panning Method", juce::StringArray {"Mono", "Stereo", "Binaural"}, 0));
-    params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::monoPannerRule, "Mono Panner Rule", juce::StringArray {"Linear", "Balanced", "Sin3dB", "sin4p5dB", "sin6dB", "squareroot3db", "squareroot4p5db"}, 1));
-    params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::stereoPannerRule, "Stereo Panner Rule", juce::StringArray{"Linear", "Sin3dB"}, 1));
+    params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::monoPannerRule, "Mono Panner Rule", juce::StringArray {"Linear", "Balanced", "Sin3dB", "sin4p5dB", "sin6dB", "squareroot3db", "squareroot4p5db"}, 0));
+    params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::stereoPannerRule, "Stereo Panner Rule", juce::StringArray{"Linear", "Sin3dB"}, 0));
     params.push_back(std::make_unique<juce::AudioParameterFloat> (ParameterID::panValue, "Panning", juce::NormalisableRange<float>(-1.0f, 1.0f, 0.01f), 0.0f));
+    params.push_back(std::make_unique<juce::AudioParameterFloat> (ParameterID::widthValue, "Width", juce::NormalisableRange<float>(0.0f, 2.0f, 0.01f, 0.3f), 1.0f));
 
 
     paramsLayout.add(params.begin(), params.end());
