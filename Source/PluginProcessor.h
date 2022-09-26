@@ -25,7 +25,6 @@ namespace ParameterID
     PARAMETER_ID(lfoActive)
     PARAMETER_ID(lfoSynced)
     PARAMETER_ID(lfoWaveform)
-    //PARAMETER_ID(binauralPannerRule)
 }
 
 template <typename T>

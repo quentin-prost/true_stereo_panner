@@ -14,7 +14,7 @@
 void Lfo::prepare_lfo(juce::dsp::ProcessSpec& spec)
 {
     set_waveform(SINE);
-    set_lfo_rate(1.0f);
+    set_lfo_rate(1.0f * spec.sampleRate / spec.maximumBlockSize);
     prepare(spec);
 }
 
@@ -58,6 +58,9 @@ void Lfo::set_lfo_rate(float rate) {
 float Lfo::process_lfo(float input) {
     float output = processSample(input);
     output *= m_amount;
+    DBG("output inside fnc");
+    DBG(output);
+    //DBG(output_lfo);
     return output;
 }
 

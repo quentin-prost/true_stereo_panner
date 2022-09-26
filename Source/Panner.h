@@ -47,14 +47,26 @@ public:
     panMethod get_pan_method() { return m_method; };
     void set_pan(float pan);
     void set_stereo_width(float width);
+    void set_lfo_synced(bool synced) {
+        lfo_sync = synced;
+        if (synced) set_lfo_rate_synced(m_rate_sync);
+        else set_lfo_rate_hz(m_rate_hz);
+        lfo.reset_lfo();
+    }
     void set_lfo_waveform(waveform_t wave) {
         lfo.set_waveform(wave);
     }
     void set_lfo_active(bool active) {
         lfo.set_active(active);
     }
+    void set_lfo_rate_synced(float rate) {
+        juce::jmin(0.01f, rate);
+        m_rate_sync = rate;
+        lfo.set_lfo_rate(rate);
+    }
     void set_lfo_rate_hz(float rate) {
         juce::jmin(0.01f, rate);
+        m_rate_hz = rate;
         lfo.set_lfo_rate(rate);
     }
     void set_lfo_amount(float amount) {
@@ -70,13 +82,13 @@ public:
     
     //void set_binaural_panner_rule(binauralPannerRule rule);
     //binauralPannerRule get_binaural_panner_rule();
-    
+    bool lfo_sync = false;
 private:
     float m_pan, m_width;
+    float m_rate_hz, m_rate_sync;
     panMethod m_method;
     juce::dsp::Panner<SampleType> mono_panner;
     StereoPanner<SampleType> stereo_panner;
     Lfo lfo;
-    bool lfo_sync = false;
 
 };

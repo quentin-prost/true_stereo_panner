@@ -229,7 +229,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout True_stereo_pannerAudioProce
     
     std::vector<std::unique_ptr<juce::RangedAudioParameter>> params;
     juce::AudioProcessorValueTreeState::ParameterLayout paramsLayout;
-    const juce::StringArray rate_sync_names = {"1/64", "1/48", "1/32", "1/16", "1/8", "1/6", "1/4", "1/3", "1/2", "1", "2", "3", "4", "8", "16"};
+    const juce::StringArray rate_sync_names = {"1/64", "1/48", "1/32", "1/16", "1/12", "1/8", "1/6", "1/4", "1/3", "1/2", "1", "2", "3", "4", "6", "8", "16"};
     
     params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::panMethod, "Panning Method", juce::StringArray {"Mono", "Stereo", "Binaural"}, 0));
     params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::monoPannerRule, "Mono Panner Rule", juce::StringArray {"Linear", "Balanced", "Sin3dB", "sin4p5dB", "sin6dB", "squareroot3db", "squareroot4p5db"}, 0));
@@ -241,7 +241,7 @@ juce::AudioProcessorValueTreeState::ParameterLayout True_stereo_pannerAudioProce
     params.push_back(std::make_unique<juce::AudioParameterFloat> (ParameterID::lfoAmount, "Amount LFO", juce::NormalisableRange<float>(0.0f, 1.0f, 0.01f, 1.0f), 0.0f));
     params.push_back(std::make_unique<juce::AudioParameterBool>(ParameterID::lfoSynced, "LFO Synced", false));
     params.push_back(std::make_unique<juce::AudioParameterFloat> (ParameterID::lfoRateHz, "Lfo Rate (Hz)", juce::NormalisableRange<float>(0.01, 10.0f, 0.01, 0.3), 1.0f));
-    params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::lfoRateSync, "Lfo Rate (Sync)", rate_sync_names, 9));
+    params.push_back(std::make_unique<juce::AudioParameterChoice> (ParameterID::lfoRateSync, "Lfo Rate (Sync)", rate_sync_names, 11));
     
     paramsLayout.add(params.begin(), params.end());
     
@@ -250,17 +250,22 @@ juce::AudioProcessorValueTreeState::ParameterLayout True_stereo_pannerAudioProce
 
 void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& paramID, float newValue) {
     if (paramID == ParameterID::panValue.getParamID()) {
-        panner.set_pan(newValue);
+        panner.set_pan(static_cast<float>(newValue));
         return;
     }
     
     if (paramID == ParameterID::widthValue.getParamID()) {
-        panner.set_stereo_width(newValue);
+        panner.set_stereo_width(static_cast<float>(newValue));
         return;
     }
     
     if (paramID == ParameterID::lfoActive.getParamID()) {
-        panner.set_lfo_active(newValue);
+        panner.set_lfo_active(static_cast<bool>(newValue));
+        return;
+    }
+    
+    if (paramID == ParameterID::lfoSynced.getParamID()) {
+        panner.set_lfo_synced(static_cast<bool>(newValue));
         return;
     }
     
@@ -268,18 +273,18 @@ void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& para
         // freq of the LFO is multiplied by fs/block_size because we increment
         // the lfo output value only at every processBlock() call, which is enough
         // for a lfo with a max freq rate of 10Hz.
-        if (!lfo_synced_param) {
-            float freq = newValue * (getSampleRate() / getBlockSize());
+        if (!panner.lfo_sync) {
+            float freq = static_cast<float>(newValue) * (getSampleRate() / getBlockSize());
             panner.set_lfo_rate_hz(freq);
         }
         return;
     }
     
     if (paramID == ParameterID::lfoRateSync.getParamID()) {
-        if (lfo_synced_param) {
+        if (panner.lfo_sync) {
             float rate_in_hz = get_rate_in_hz(static_cast<sync_rate_t>(newValue));
             float freq = rate_in_hz * (getSampleRate() / getBlockSize() );
-            panner.set_lfo_rate_hz(freq);
+            panner.set_lfo_rate_synced(freq);
         }
         return;
     }

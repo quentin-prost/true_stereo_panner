@@ -40,7 +40,7 @@ public:
     float process_lfo(float input);
 private:
     float m_amount = 0.0f;
-    float m_rate = 1.0f;
+    float m_rate;
     bool m_active = false;
     waveform_t m_waveform = SINE;
 };
