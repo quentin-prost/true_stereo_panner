@@ -24,6 +24,7 @@ namespace ParameterID
     PARAMETER_ID(lfoAmount)
     PARAMETER_ID(lfoActive)
     PARAMETER_ID(lfoSynced)
+    PARAMETER_ID(lfoWaveform)
     //PARAMETER_ID(binauralPannerRule)
 }
 
@@ -77,9 +78,6 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    void set_pan_method(panMethod method);
-    void set_pan(float pan);
-    
     float get_rate_in_hz(sync_rate_t rate);
     
     juce::AudioProcessorValueTreeState apvts;
@@ -88,13 +86,12 @@ private:
     panMethod m_method = MONO_PANNER;
     monoPannerRule m_mono_rule = MONO_LINEAR;
     stereoPannerRule m_stereo_rule = STEREO_LINEAR;
-    //binauralPannerRule m_binaural_rule;
 
     // Play head to retrieve BPM from host
     juce::AudioPlayHead* play_head;
     juce::AudioPlayHead::CurrentPositionInfo current_position_info;
     
-    // Editor //
+    // Parameters //
     juce::AudioProcessorValueTreeState::ParameterLayout createParameters();
     juce::AudioParameterFloat* pan_param;
     juce::AudioParameterFloat* width_param;
@@ -103,6 +100,7 @@ private:
     juce::AudioParameterChoice* stereo_rule_param;
     juce::AudioParameterBool* lfo_active_param;
     juce::AudioParameterBool* lfo_synced_param;
+    juce::AudioParameterChoice* lfo_waveform_param;
     juce::AudioParameterFloat* lfo_rate_hz_param;
     juce::AudioParameterChoice* lfo_rate_sync_param;
     juce::AudioParameterFloat* lfo_amount_param;

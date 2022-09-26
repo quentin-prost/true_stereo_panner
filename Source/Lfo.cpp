@@ -19,6 +19,7 @@ void Lfo::prepare_lfo(juce::dsp::ProcessSpec& spec)
 }
 
 void Lfo::set_waveform(waveform_t waveform) {
+    
     switch (waveform) {
         case SINE:
             initialise([](float x) {return std::sin (x); }, 0);
@@ -37,6 +38,11 @@ void Lfo::set_waveform(waveform_t waveform) {
             break;
     }
     m_waveform = waveform;
+    reset();
+}
+
+void Lfo::set_active(bool active) {
+    m_active = active;
 }
 
 void Lfo::set_lfo_amount(float amount) {
@@ -45,12 +51,8 @@ void Lfo::set_lfo_amount(float amount) {
 }
 
 void Lfo::set_lfo_rate(float rate) {
-    DBG("rate lfo");
-    DBG(rate);
-    setFrequency(rate, true);
-    reset_lfo();
+    setFrequency(rate);
     m_rate = rate;
-    DBG(getFrequency());
 }
 
 float Lfo::process_lfo(float input) {

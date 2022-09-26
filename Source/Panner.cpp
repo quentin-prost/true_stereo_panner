@@ -56,12 +56,11 @@ template <typename SampleType> void Panner<SampleType>::prepare(juce::dsp::Proce
 template <typename SampleType> void Panner<SampleType>::process(juce::dsp::ProcessContextReplacing<SampleType> &context) {
     SampleType output_lfo;
     
-    if (is_lfo_active) {
+    if (lfo.is_active()) {
         output_lfo = lfo.process_lfo(0.0f);
-        float modulated_pan = m_pan + output_lfo * m_lfo_amount;
+        float modulated_pan = m_pan + output_lfo;
         juce::jlimit(static_cast<SampleType>(-1.0), static_cast<SampleType>(1.0), static_cast<SampleType>(modulated_pan));
         set_pan(modulated_pan);
-        DBG(modulated_pan);
     }
     
     switch (m_method) {
