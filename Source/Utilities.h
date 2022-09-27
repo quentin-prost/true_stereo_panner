@@ -18,12 +18,12 @@ inline void limitOutput(float* buffer, int sampleCount)
         float x = buffer[i];
         bool silence = false;
         if (std::isnan(x)) {
-            DBG("!!! WARNING: nan detected in audio buffer, silencing !!!");
+            DBG("!!! Nan detected in audio buffer, silencing !!!");
             silence = true;
         } else if (std::isinf(x)) {
             DBG("!!! WARNING: inf detected in audio buffer, silencing !!!");
             silence = true;
-        } else if (x < -2.0f || x > 2.0f) {  // screaming feedback
+        } else if (x < -2.0f || x > 2.0f) {
             DBG("WARNING: sample out of range, silencing");
             silence = true;
         } else if (x < -1.0f) {

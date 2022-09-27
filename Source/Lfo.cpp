@@ -3,7 +3,7 @@
 
     Lfo.cpp
     Created: 25 Sep 2022 5:43:59pm
-    Author:  Student
+    Author:  Quentin Prost
 
   ==============================================================================
 */

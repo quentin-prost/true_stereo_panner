@@ -186,7 +186,7 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     }
     panner.process(processContext);
     
-    /* Limiter to avoid any unexpected ear loss */
+    // Limiting to avoid any unexpected ear loss or speaker damage..
     limitOutput(buffer.getWritePointer(0), buffer.getNumSamples());
     limitOutput(buffer.getWritePointer(1), buffer.getNumSamples());
 }
@@ -272,7 +272,7 @@ void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& para
     if (paramID == ParameterID::lfoRateHz.getParamID()) {
         // freq of the LFO is multiplied by fs/block_size because we increment
         // the lfo output value only at every processBlock() call, which is enough
-        // for a lfo with a max freq rate of 10Hz.
+        // for a lfo with a max freq rate of 10Hz. Might reconsider design and add an lfo on each type of panner and update lfo output at every sample (which can be useful for higher lfo frequency rate
         if (!panner.lfo_sync) {
             float freq = static_cast<float>(newValue) * (getSampleRate() / getBlockSize());
             panner.set_lfo_rate_hz(freq);
@@ -303,7 +303,7 @@ void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& para
 float True_stereo_pannerAudioProcessor::get_rate_in_hz(sync_rate_t rate) {
     float rate_hz;
     float bpm = current_position_info.bpm;
-    if (bpm <= __FLT_EPSILON__) jassertfalse;
+    if (bpm <= __FLT_EPSILON__) jassertfalse; // Some host might not give some bpm values (Audacity for instance)
     DBG(rate);
     //DBG(bpm);
     switch (rate) {

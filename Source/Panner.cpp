@@ -60,7 +60,7 @@ template <typename SampleType> void Panner<SampleType>::process(juce::dsp::Proce
         modulated_pan = lfo.process_lfo(0.0f);
         juce::jlimit(static_cast<float>(-1.0), static_cast<float>(1.0), static_cast<float>(modulated_pan));
         set_pan(modulated_pan);
-        DBG(modulated_pan);
+        //DBG(modulated_pan);
     }
     
     switch (m_method) {

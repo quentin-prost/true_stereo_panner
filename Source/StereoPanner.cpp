@@ -3,7 +3,7 @@
 
     StereoPanner.cpp
     Created: 23 Sep 2022 9:21:58pm
-    Author:  Student
+    Author:  Quentin Prost
 
   ==============================================================================
 */

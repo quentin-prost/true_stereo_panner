@@ -3,7 +3,7 @@
 
     BinauralPanner.cpp
     Created: 23 Sep 2022 9:22:05pm
-    Author:  Student
+    Author:  Quentin Prost
 
   ==============================================================================
 */

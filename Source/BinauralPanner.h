@@ -3,11 +3,11 @@
 
     BinauralPanner.h
     Created: 23 Sep 2022 9:22:05pm
-    Author:  Student
+    Author:  Quentin Prost
 
   ==============================================================================
 */
-
+// Not implemented yet
 #include <JuceHeader.h>
 #pragma once
 
@@ -16,6 +16,8 @@ template <typename SampleType> struct binaural_panner_state {
     SampleType gain_rr;
     SampleType gain_lr;
     SampleType gain_rl;
+    juce::dsp::DelayLine<SampleType> delayLine_left;
+    juce::dsp::DelayLine<SampleType> delayLine_right;
 };
 
 typedef enum {
