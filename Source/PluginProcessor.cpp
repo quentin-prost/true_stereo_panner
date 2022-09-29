@@ -186,8 +186,10 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
             }
         } else {
             const juce::String& paramID = ParameterID::lfoRateHz.getParamID();
-            if ((apvts.getRawParameterValue(paramID)->load() - last_rate_hz) > __FLT_EPSILON__) {
+            float rate = apvts.getRawParameterValue(paramID)->load();
+            if ((rate - last_rate_hz) > __FLT_EPSILON__) {
                 panner.set_lfo_rate_hz(apvts.getRawParameterValue(paramID)->load());
+                last_rate_hz = rate;
             }
         }
     }

@@ -58,9 +58,6 @@ void Lfo::set_lfo_rate(float rate) {
 float Lfo::process_lfo(float input) {
     float output = processSample(input);
     output *= m_amount;
-    DBG("output inside fnc");
-    DBG(output);
-    //DBG(output_lfo);
     return output;
 }
 
