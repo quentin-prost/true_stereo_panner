@@ -79,9 +79,6 @@ public:
     juce::AudioProcessorValueTreeState apvts;
 private:
     Panner<float> panner;
-    panMethod m_method = MONO_PANNER;
-    monoPannerRule m_mono_rule = MONO_LINEAR;
-    stereoPannerRule m_stereo_rule = STEREO_LINEAR;
     float last_bpm = 0.0f, last_rate_hz;
     sync_rate_t last_rate_sync;
     

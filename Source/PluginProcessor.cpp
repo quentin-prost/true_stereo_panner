@@ -35,6 +35,9 @@ True_stereo_pannerAudioProcessor::True_stereo_pannerAudioProcessor()
     castParameter(apvts, ParameterID::lfoRateSync, lfo_rate_sync_param);
     castParameter(apvts, ParameterID::lfoWaveform, lfo_waveform_param);
     
+    apvts.addParameterListener(ParameterID::panMethod.getParamID(), this);
+    apvts.addParameterListener(ParameterID::stereoPannerRule.getParamID(), this);
+    apvts.addParameterListener(ParameterID::monoPannerRule.getParamID(), this);
     apvts.addParameterListener(ParameterID::panValue.getParamID(), this);
     apvts.addParameterListener(ParameterID::widthValue.getParamID(), this);
     apvts.addParameterListener(ParameterID::lfoSynced.getParamID(), this);
@@ -49,6 +52,9 @@ True_stereo_pannerAudioProcessor::True_stereo_pannerAudioProcessor()
 
 True_stereo_pannerAudioProcessor::~True_stereo_pannerAudioProcessor()
 {
+    apvts.removeParameterListener(ParameterID::panMethod.getParamID(), this);
+    apvts.removeParameterListener(ParameterID::stereoPannerRule.getParamID(), this);
+    apvts.removeParameterListener(ParameterID::monoPannerRule.getParamID(), this);
     apvts.removeParameterListener(ParameterID::panValue.getParamID(), this);
     apvts.removeParameterListener(ParameterID::widthValue.getParamID(), this);
     apvts.removeParameterListener(ParameterID::lfoSynced.getParamID(), this);
@@ -173,7 +179,18 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     auto audioBlock = juce::dsp::AudioBlock<float> (buffer);
     auto processContext = juce::dsp::ProcessContextReplacing<float> (audioBlock);
     
-    panner.set_pan_method((panMethod) pan_method_param->getIndex());
+    // panner.set_pan_method((panMethod) pan_method_param->getIndex());
+    
+    //    switch (panner.get_pan_method()) {
+    //        case MONO_PANNER:
+    //            panner.set_mono_panner_rule((juce::dsp::PannerRule) mono_rule_param->getIndex());
+    //            break;
+    //        case STEREO_PANNER:
+    //            panner.set_stereo_panner_rule((stereoPannerRule) stereo_rule_param->getIndex());
+    //            break;
+    //        default:
+    //            break;
+    //    }
     
     if (panner.get_lfo_active()) {
         if (panner.get_lfo_synced()) {
@@ -196,16 +213,6 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
         }
     }
     
-    switch (panner.get_pan_method()) {
-        case MONO_PANNER:
-            panner.set_mono_panner_rule((juce::dsp::PannerRule) mono_rule_param->getIndex());
-            break;
-        case STEREO_PANNER:
-            panner.set_stereo_panner_rule((stereoPannerRule) stereo_rule_param->getIndex());
-            break;
-        default:
-            break;
-    }
     panner.process(processContext);
     
     // Limiting to avoid any unexpected ear loss or speaker damage..
@@ -271,6 +278,21 @@ juce::AudioProcessorValueTreeState::ParameterLayout True_stereo_pannerAudioProce
 }
 
 void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& paramID, float newValue) {
+    if (paramID == ParameterID::stereoPannerRule.getParamID()) {
+        panner.set_stereo_panner_rule(static_cast<stereoPannerRule>(newValue));
+        return;
+    }
+    
+    if (paramID == ParameterID::monoPannerRule.getParamID()) {
+        panner.set_mono_panner_rule(static_cast<juce::dsp::PannerRule>(newValue));
+        return;
+    }
+    
+    if (paramID == ParameterID::panMethod.getParamID()) {
+        panner.set_pan_method(static_cast<panMethod>(newValue));
+        return;
+    }
+    
     if (paramID == ParameterID::panValue.getParamID()) {
         panner.set_pan(static_cast<float>(newValue));
         return;

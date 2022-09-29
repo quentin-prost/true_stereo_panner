@@ -45,14 +45,27 @@ template <typename SampleType> void Panner<SampleType>::set_stereo_width(float w
 }
 
 template <typename SampleType> void Panner<SampleType>::set_pan_method(panMethod method) {
+    DBG(method);
     m_method = method;
+    switch (m_method) {
+        case MONO_PANNER:
+            mono_panner.setPan(m_pan);
+            break;
+        case STEREO_PANNER:
+            stereo_panner.set_pan(m_pan);
+            break;
+        default:
+            break;
+    }
 };
 
 template <typename SampleType> void Panner<SampleType>::set_mono_panner_rule(juce::dsp::PannerRule rule) {
+    m_mono_rule = static_cast<monoPannerRule>(rule);
     mono_panner.setRule(rule);
 }
 
 template <typename SampleType> void Panner<SampleType>::set_stereo_panner_rule(stereoPannerRule rule) {
+    m_stereo_rule = rule;
     stereo_panner.set_rule(rule);
 }
 
@@ -77,7 +90,7 @@ template <typename SampleType> void Panner<SampleType>::process(juce::dsp::Proce
 //        case BINAURAL_PANNER:
 //            //process_binaural_pan(context);
         default:
-            jassertfalse;
+//            jassertfalse;
             break;
     }
 };

@@ -92,21 +92,22 @@ public:
     void set_stereo_panner_rule(stereoPannerRule rule);
     stereoPannerRule get_stereo_panner_rule(stereoPannerRule rule);
     
-    //void set_binaural_panner_rule(binauralPannerRule rule);
-    //binauralPannerRule get_binaural_panner_rule();
 private:
     
     juce::dsp::ProcessSpec m_spec;
-    float m_pan, m_width;
+    float m_pan = 0.0f, m_width = 1.0f;
     
-    panMethod m_method;
+    panMethod m_method = MONO_PANNER;
+    monoPannerRule m_mono_rule = MONO_LINEAR;
+    stereoPannerRule m_stereo_rule = STEREO_LINEAR;
+    
     juce::dsp::Panner<SampleType> mono_panner;
     StereoPanner<SampleType> stereo_panner;
     
     Lfo lfo;
-    bool m_lfo_synced;
-    float m_rate_hz; // rate in Hertz
-    sync_rate_t m_rate_sync; // rate in bpm
+    bool m_lfo_synced = false;
+    float m_rate_hz = 1.0f; // rate in Hertz
+    sync_rate_t m_rate_sync = T1_1; // rate in bpm
     float m_bpm = 120.0f;
 
 };

@@ -99,6 +99,7 @@ template <typename SampleType> float StereoPanner<SampleType>::get_pan_target() 
 
 template <typename SampleType> void StereoPanner<SampleType>::set_rule(stereoPannerRule rule) {
     m_rule = rule;
+    set_pan(m_pan);
 }
 
 template <typename SampleType> void StereoPanner<SampleType>::process(const juce::dsp::ProcessContextReplacing<SampleType> &context) {
