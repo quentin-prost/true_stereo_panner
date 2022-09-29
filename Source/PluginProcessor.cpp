@@ -43,6 +43,8 @@ True_stereo_pannerAudioProcessor::True_stereo_pannerAudioProcessor()
     apvts.addParameterListener(ParameterID::lfoRateSync.getParamID(), this);
     apvts.addParameterListener(ParameterID::lfoAmount.getParamID(), this);
     apvts.addParameterListener(ParameterID::lfoActive.getParamID(), this);
+    
+    current_position_info = new juce::AudioPlayHead::CurrentPositionInfo();
 }
 
 True_stereo_pannerAudioProcessor::~True_stereo_pannerAudioProcessor()
@@ -128,6 +130,8 @@ void True_stereo_pannerAudioProcessor::prepareToPlay (double sampleRate, int sam
     spec.numChannels = getTotalNumOutputChannels();
     spec.sampleRate = sampleRate;
     panner.prepare(spec);
+    getPlayHead()->getCurrentPosition(*current_position_info);
+    last_bpm = current_position_info->bpm;
 }
 
 void True_stereo_pannerAudioProcessor::releaseResources()
@@ -169,23 +173,25 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     auto audioBlock = juce::dsp::AudioBlock<float> (buffer);
     auto processContext = juce::dsp::ProcessContextReplacing<float> (audioBlock);
     
-    
-    
     panner.set_pan_method((panMethod) pan_method_param->getIndex());
     
-    
-    
-    if (panner.is_lfo_synced) {
-        play_head = getPlayHead();
-        float bpm = play_head->getCurrentPosition(current_position_info).bpm;
-        if ((bpm - last_bpm) > __FLT_EPSILON__)
-            get_rate_in_hz(<#sync_rate_t rate#>)
-            panner.set_lfo_rate_synced(static_cast<float>);
-    } else {
-        const juce::String paramID = ParameterID::lfoRateHz.getParamID();
-        panner.set_lfo_rate_hz(static_cast<float>(apvts.
+    if (panner.get_lfo_active()) {
+        if (panner.get_lfo_synced()) {
+            getPlayHead()->getCurrentPosition(*current_position_info);
+            float bpm = current_position_info->bpm;
+            if ((bpm - last_bpm) > __FLT_EPSILON__) { // bpm != last_bpm
+                const juce::String& paramID = ParameterID::lfoRateSync.getParamID();
+                panner.set_lfo_rate_synced((sync_rate_t) apvts.getRawParameterValue(paramID)->load(), bpm);
+                last_bpm = bpm;
+            }
+        } else {
+            const juce::String& paramID = ParameterID::lfoRateHz.getParamID();
+            if ((apvts.getRawParameterValue(paramID)->load() - last_rate_hz) > __FLT_EPSILON__) {
+                panner.set_lfo_rate_hz(apvts.getRawParameterValue(paramID)->load());
+            }
+        }
     }
-    s.getRawParameterValue(paramID)->load()));
+    
     switch (panner.get_pan_method()) {
         case MONO_PANNER:
             panner.set_mono_panner_rule((juce::dsp::PannerRule) mono_rule_param->getIndex());
@@ -277,29 +283,29 @@ void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& para
     }
     
     if (paramID == ParameterID::lfoSynced.getParamID()) {
-        panner.set_lfo_synced(static_cast<bool>(newValue));
+        panner.set_lfo_synced(static_cast<bool>(newValue), last_bpm);
         return;
     }
     
-    if (paramID == ParameterID::lfoRateHz.getParamID()) {
-        // freq of the LFO is multiplied by fs/block_size because we increment
-        // the lfo output value only at every processBlock() call, which is enough
-        // for a lfo with a max freq rate of 10Hz. Might reconsider design and add an lfo on each type of panner and update lfo output at every sample (which can be useful for higher lfo frequency rate
-        if (!panner.lfo_sync) {
-            float freq = static_cast<float>(newValue) * (getSampleRate() / getBlockSize());
-            panner.set_lfo_rate_hz(freq);
-        }
-        return;
-    }
-    
-    if (paramID == ParameterID::lfoRateSync.getParamID()) {
-        if (panner.lfo_sync) {
-            float rate_in_hz = get_rate_in_hz(static_cast<sync_rate_t>(newValue));
-            float freq = rate_in_hz * (getSampleRate() / getBlockSize() );
-            panner.set_lfo_rate_synced(freq);
-        }
-        return;
-    }
+//    if (paramID == ParameterID::lfoRateHz.getParamID()) {
+//        // freq of the LFO is multiplied by fs/block_size because we increment
+//        // the lfo output value only at every processBlock() call, which is enough
+//        // for a lfo with a max freq rate of 10Hz. Might reconsider design and add an lfo on each type of panner and update lfo output at every sample (which can be useful for higher lfo frequency rate
+//        if (!panner.lfo_sync) {
+//            float freq = static_cast<float>(newValue) * (getSampleRate() / getBlockSize());
+//            panner.set_lfo_rate_hz(freq);
+//        }
+//        return;
+//    }
+//
+//    if (paramID == ParameterID::lfoRateSync.getParamID()) {
+//        if (panner.lfo_sync) {
+//            float rate_in_hz = get_rate_in_hz(static_cast<sync_rate_t>(newValue));
+//            float freq = rate_in_hz * (getSampleRate() / getBlockSize() );
+//            panner.set_lfo_rate_synced(freq);
+//        }
+//        return;
+//    }
     
     if (paramID == ParameterID::lfoAmount.getParamID()) {
         panner.set_lfo_amount(newValue);
@@ -312,46 +318,3 @@ void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& para
     }
 }
 
-float True_stereo_pannerAudioProcessor::get_rate_in_hz(sync_rate_t rate, float bpm) {
-    if (bpm <= __FLT_EPSILON__) jassertfalse;
-    DBG(rate);
-    //DBG(bpm);
-    switch (rate) {
-        case T1_64: rate_hz = 64.0f * bpm / 60.0f;
-            break;
-        case T1_48: rate_hz = 48.0f * bpm / 60.0f;
-            break;
-        case T1_32: rate_hz = 32.0f * bpm / 60.0f;
-            break;
-        case T1_16: rate_hz = 16.0f * bpm / 60.0f;
-            break;
-        case T1_12: rate_hz = 12.0f * bpm / 60.0f;
-            break;
-        case T1_8:  rate_hz = 8.0f * bpm / 60.0f;
-            break;
-        case T1_6:  rate_hz = 6.0f * bpm / 60.0f;
-            break;
-        case T1_4:  rate_hz = 4.0f * bpm / 60.0f;
-            break;
-        case T1_3:  rate_hz = 3.0f * bpm / 60.0f;
-            break;
-        case T1_2:  rate_hz = 2.0f * bpm / 60.0f;
-            break;
-        case T1_1:  rate_hz = 1.0f * bpm / 60.0f;
-            break;
-        case T2_1:  rate_hz = (1/2.0f) * bpm / 60.0f;
-            break;
-        case T3_1:  rate_hz = (1/3.0f) * bpm / 60.0f;
-            break;
-        case T4_1:  rate_hz = (1/4.0f) * bpm / 60.0f;
-            break;
-        case T8_1:  rate_hz = (1/8.0f) * bpm / 60.0f;
-            break;
-        case T16_1: rate_hz = (1/16.0f) * bpm / 60.0f;
-            break;
-        default: rate_hz = bpm / 60.0f;
-            break;
-    }
-    return rate_hz;
-    
-}

@@ -8,11 +8,14 @@
   ==============================================================================
 */
 
+#pragma once
+
 #include <JuceHeader.h>
 #include "StereoPanner.h"
 #include "BinauralPanner.h"
 #include "Lfo.h"
-#pragma once
+#include "Utilities.h"
+
 
 typedef enum {
     MONO_PANNER = 0,
@@ -30,11 +33,6 @@ typedef enum {
     MONO_SQUAREROOT4P5DB
 } monoPannerRule;
 
-typedef enum {
-    T1_64 = 0, T1_48, T1_32, T1_16, T1_12, T1_8, T1_6, T1_4,
-    T1_3, T1_2, T1_1, T2_1, T3_1, T4_1, T6_1, T8_1, T16_1
-} sync_rate_t;
-
 template <typename SampleType> class Panner {
 public:
     Panner();
@@ -47,17 +45,30 @@ public:
     panMethod get_pan_method() { return m_method; };
     void set_pan(float pan);
     void set_stereo_width(float width);
-    void set_lfo_synced(bool synced) {
-        lfo_sync = synced;
-        if (synced) set_lfo_rate_synced(m_rate_sync);
-        else set_lfo_rate_hz(m_rate_hz);
+    void set_lfo_synced(bool synced, float bpm) {
+        m_lfo_synced = synced;
+        if (synced) {
+            float rate = get_rate_in_hz(m_rate_sync, m_bpm);
+            set_lfo_rate_hz(rate);
+        } else {
+            set_lfo_rate_hz(m_rate_hz);
+        }
         lfo.reset_lfo();
+    }
+    void set_lfo_rate_synced(sync_rate_t rate, float bpm) {
+        m_rate_sync = rate;
+        m_bpm = bpm;
+        float rate_hz = get_rate_in_hz(rate, m_bpm);
+        lfo.set_lfo_rate(rate_hz);
     }
     void set_lfo_waveform(waveform_t wave) {
         lfo.set_waveform(wave);
     }
     void set_lfo_active(bool active) {
         lfo.set_active(active);
+    }
+    bool get_lfo_active() {
+        return lfo.is_active();
     }
     void set_lfo_rate_hz(float rate) {
         juce::jmin(0.01f, rate);
@@ -68,10 +79,7 @@ public:
         juce::jlimit(0.0f, 1.0f, amount);
         lfo.set_lfo_amount(amount);
     }
-    void set_lfo_synced(bool synced) {
-        m_lfo_synced = synced;
-    }
-    void get_lfo_synced() {
+    bool get_lfo_synced() {
         return m_lfo_synced;
     }
     void set_mono_panner_rule(juce::dsp::PannerRule rule);
@@ -82,10 +90,11 @@ public:
     
     //void set_binaural_panner_rule(binauralPannerRule rule);
     //binauralPannerRule get_binaural_panner_rule();
-    bool lfo_sync = false;
 private:
     float m_pan, m_width;
-    float m_rate_hz, m_rate_sync;
+    float m_rate_hz;
+    sync_rate_t m_rate_sync;
+    float m_bpm = 120.0f;
     panMethod m_method;
     juce::dsp::Panner<SampleType> mono_panner;
     StereoPanner<SampleType> stereo_panner;
