@@ -5,7 +5,8 @@
               jucerFormatVersion="1">
   <MAINGROUP id="t3j9no" name="true_stereo_panner">
     <GROUP id="{9C533A8F-E383-8A3A-3426-C416F35EBF18}" name="Source">
-      <FILE id="SNe5i9" name="Utilities.cpp" compile="1" resource="0" file="Source/Utilities.cpp"/>
+      <FILE id="LfA7sl" name="Oscillator.cpp" compile="1" resource="0" file="Source/Oscillator.cpp"/>
+      <FILE id="TviGdC" name="Oscillator.h" compile="0" resource="0" file="Source/Oscillator.h"/>
       <FILE id="CH2yvF" name="Utilities.h" compile="0" resource="0" file="Source/Utilities.h"/>
       <FILE id="tNBOih" name="Lfo.cpp" compile="1" resource="0" file="Source/Lfo.cpp"/>
       <FILE id="jhiieQ" name="Lfo.h" compile="0" resource="0" file="Source/Lfo.h"/>

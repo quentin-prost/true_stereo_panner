@@ -15,6 +15,7 @@ void Lfo::prepare_lfo(juce::dsp::ProcessSpec& spec)
 {
     set_waveform(SINE);
     set_lfo_rate(1.0f * spec.sampleRate / spec.maximumBlockSize);
+    frequency.reset(spec.sampleRate, 0.001);
     prepare(spec);
 }
 

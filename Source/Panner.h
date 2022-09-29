@@ -45,11 +45,12 @@ public:
     panMethod get_pan_method() { return m_method; };
     void set_pan(float pan);
     void set_stereo_width(float width);
+    
     void set_lfo_synced(bool synced, float bpm) {
         m_lfo_synced = synced;
         if (synced) {
-            float rate = get_rate_in_hz(m_rate_sync, m_bpm);
-            set_lfo_rate_hz(rate);
+            float rate_hz = get_rate_in_hz(m_rate_sync, m_bpm) * m_spec.sampleRate / m_spec.maximumBlockSize;
+            set_lfo_rate_hz(rate_hz);
         } else {
             set_lfo_rate_hz(m_rate_hz);
         }
@@ -58,8 +59,13 @@ public:
     void set_lfo_rate_synced(sync_rate_t rate, float bpm) {
         m_rate_sync = rate;
         m_bpm = bpm;
-        float rate_hz = get_rate_in_hz(rate, m_bpm);
+        float rate_hz = get_rate_in_hz(rate, m_bpm) * m_spec.sampleRate / m_spec.maximumBlockSize;
         lfo.set_lfo_rate(rate_hz);
+    }
+    void set_lfo_rate_hz(float rate) {
+        juce::jmin(0.01f, rate);
+        m_rate_hz = rate;
+        lfo.set_lfo_rate(rate * m_spec.sampleRate / m_spec.maximumBlockSize);
     }
     void set_lfo_waveform(waveform_t wave) {
         lfo.set_waveform(wave);
@@ -70,11 +76,7 @@ public:
     bool get_lfo_active() {
         return lfo.is_active();
     }
-    void set_lfo_rate_hz(float rate) {
-        juce::jmin(0.01f, rate);
-        m_rate_hz = rate;
-        lfo.set_lfo_rate(rate);
-    }
+
     void set_lfo_amount(float amount) {
         juce::jlimit(0.0f, 1.0f, amount);
         lfo.set_lfo_amount(amount);
@@ -91,14 +93,18 @@ public:
     //void set_binaural_panner_rule(binauralPannerRule rule);
     //binauralPannerRule get_binaural_panner_rule();
 private:
+    
+    juce::dsp::ProcessSpec m_spec;
     float m_pan, m_width;
-    float m_rate_hz;
-    sync_rate_t m_rate_sync;
-    float m_bpm = 120.0f;
+    
     panMethod m_method;
     juce::dsp::Panner<SampleType> mono_panner;
     StereoPanner<SampleType> stereo_panner;
+    
     Lfo lfo;
     bool m_lfo_synced;
+    float m_rate_hz; // rate in Hertz
+    sync_rate_t m_rate_sync; // rate in bpm
+    float m_bpm = 120.0f;
 
 };

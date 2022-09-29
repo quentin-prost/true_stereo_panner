@@ -82,7 +82,7 @@ private:
     panMethod m_method = MONO_PANNER;
     monoPannerRule m_mono_rule = MONO_LINEAR;
     stereoPannerRule m_stereo_rule = STEREO_LINEAR;
-    float last_bpm, last_rate_hz;
+    float last_bpm = 0.0f, last_rate_hz;
     
     // Play head to retrieve BPM from host
     juce::AudioPlayHead::CurrentPositionInfo* current_position_info;

@@ -30,6 +30,15 @@ template <typename SampleType> void Panner<SampleType>::set_pan(float pan) {
     }
 }
 
+template <typename SampleType> void Panner<SampleType>::prepare(juce::dsp::ProcessSpec &spec) {
+    m_spec.sampleRate = spec.sampleRate;
+    m_spec.maximumBlockSize = spec.maximumBlockSize;
+    m_spec.numChannels = spec.numChannels;
+    mono_panner.prepare(spec);
+    stereo_panner.prepare(spec);
+    lfo.prepare_lfo(spec);
+}
+
 template <typename SampleType> void Panner<SampleType>::set_stereo_width(float width) {
     stereo_panner.set_width(width);
     m_width = width;
@@ -45,12 +54,6 @@ template <typename SampleType> void Panner<SampleType>::set_mono_panner_rule(juc
 
 template <typename SampleType> void Panner<SampleType>::set_stereo_panner_rule(stereoPannerRule rule) {
     stereo_panner.set_rule(rule);
-}
-
-template <typename SampleType> void Panner<SampleType>::prepare(juce::dsp::ProcessSpec &spec) {
-    mono_panner.prepare(spec);
-    stereo_panner.prepare(spec);
-    lfo.prepare_lfo(spec);
 }
 
 template <typename SampleType> void Panner<SampleType>::process(juce::dsp::ProcessContextReplacing<SampleType> &context) {

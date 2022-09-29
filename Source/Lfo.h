@@ -10,7 +10,7 @@
 
 #pragma once
 #include <JuceHeader.h>
-
+#include "Oscillator.h"
 typedef enum {
     SINE = 0,
     SAW,
@@ -21,7 +21,7 @@ typedef enum {
 /* create an lfo class derived from the juce oscillator class
    Oscillator shape is based on an user provided function */
 
-class Lfo : juce::dsp::Oscillator<float> {
+class Lfo : Oscillator<float> {
 public:
     
     Lfo() {

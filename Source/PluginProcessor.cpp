@@ -57,6 +57,8 @@ True_stereo_pannerAudioProcessor::~True_stereo_pannerAudioProcessor()
     apvts.removeParameterListener(ParameterID::lfoRateSync.getParamID(), this);
     apvts.removeParameterListener(ParameterID::lfoAmount.getParamID(), this);
     apvts.removeParameterListener(ParameterID::lfoActive.getParamID(), this);
+    
+    delete current_position_info;
 }
 
 //==============================================================================
@@ -130,8 +132,6 @@ void True_stereo_pannerAudioProcessor::prepareToPlay (double sampleRate, int sam
     spec.numChannels = getTotalNumOutputChannels();
     spec.sampleRate = sampleRate;
     panner.prepare(spec);
-    getPlayHead()->getCurrentPosition(*current_position_info);
-    last_bpm = current_position_info->bpm;
 }
 
 void True_stereo_pannerAudioProcessor::releaseResources()
