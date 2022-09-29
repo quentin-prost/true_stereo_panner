@@ -179,15 +179,17 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
         if (panner.get_lfo_synced()) {
             getPlayHead()->getCurrentPosition(*current_position_info);
             float bpm = current_position_info->bpm;
-            if ((bpm - last_bpm) > __FLT_EPSILON__) { // bpm != last_bpm
-                const juce::String& paramID = ParameterID::lfoRateSync.getParamID();
-                panner.set_lfo_rate_synced((sync_rate_t) apvts.getRawParameterValue(paramID)->load(), bpm);
+            const juce::String& paramID = ParameterID::lfoRateSync.getParamID();
+            sync_rate_t sync_rate = (sync_rate_t) apvts.getRawParameterValue(paramID)->load();
+            if ((last_rate_sync != sync_rate) || (abs(bpm - last_bpm)) > __FLT_EPSILON__) { // bpm != last_bpm
+                panner.set_lfo_rate_synced(sync_rate, bpm);
                 last_bpm = bpm;
+                last_rate_sync = sync_rate;
             }
         } else {
             const juce::String& paramID = ParameterID::lfoRateHz.getParamID();
             float rate = apvts.getRawParameterValue(paramID)->load();
-            if ((rate - last_rate_hz) > __FLT_EPSILON__) {
+            if ((abs(rate - last_rate_hz)) > __FLT_EPSILON__) {
                 panner.set_lfo_rate_hz(apvts.getRawParameterValue(paramID)->load());
                 last_rate_hz = rate;
             }

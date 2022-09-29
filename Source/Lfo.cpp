@@ -14,9 +14,9 @@
 void Lfo::prepare_lfo(juce::dsp::ProcessSpec& spec)
 {
     set_waveform(SINE);
-    set_lfo_rate(1.0f * spec.sampleRate / spec.maximumBlockSize);
-    frequency.reset(spec.sampleRate, 0.001);
+    set_lfo_rate(1.0f);
     prepare(spec);
+    frequency.reset(spec.sampleRate, 0.001); // if lfo rate changes frequency interpolates over a time of 1ms
 }
 
 void Lfo::set_waveform(waveform_t waveform) {
@@ -40,6 +40,11 @@ void Lfo::set_waveform(waveform_t waveform) {
     }
     m_waveform = waveform;
     reset();
+}
+
+void Lfo::skip_samples(int num_samples) {
+    float increment = (juce::MathConstants<float>::twoPi * frequency.getCurrentValue() / sampleRate) * num_samples;
+    phase.advance(increment);
 }
 
 void Lfo::set_active(bool active) {

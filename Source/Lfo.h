@@ -35,6 +35,7 @@ public:
     void set_waveform(const waveform_t waveform);
     void set_lfo_amount(const float amount);
     void set_lfo_rate(float rate);
+    void skip_samples(int num); // Skip num samples of the lfo output
     bool is_active() { return m_active; };
     
     float process_lfo(float input);

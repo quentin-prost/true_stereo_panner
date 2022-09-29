@@ -49,7 +49,7 @@ public:
     void set_lfo_synced(bool synced, float bpm) {
         m_lfo_synced = synced;
         if (synced) {
-            float rate_hz = get_rate_in_hz(m_rate_sync, m_bpm) * m_spec.sampleRate / m_spec.maximumBlockSize;
+            float rate_hz = get_rate_in_hz(m_rate_sync, m_bpm);
             set_lfo_rate_hz(rate_hz);
         } else {
             set_lfo_rate_hz(m_rate_hz);
@@ -59,19 +59,21 @@ public:
     void set_lfo_rate_synced(sync_rate_t rate, float bpm) {
         m_rate_sync = rate;
         m_bpm = bpm;
-        float rate_hz = get_rate_in_hz(rate, m_bpm) * m_spec.sampleRate / m_spec.maximumBlockSize;
+        float rate_hz = get_rate_in_hz(rate, m_bpm);
         lfo.set_lfo_rate(rate_hz);
     }
     void set_lfo_rate_hz(float rate) {
         juce::jmin(0.01f, rate);
         m_rate_hz = rate;
-        lfo.set_lfo_rate(rate * m_spec.sampleRate / m_spec.maximumBlockSize);
+        lfo.set_lfo_rate(rate);
     }
     void set_lfo_waveform(waveform_t wave) {
         lfo.set_waveform(wave);
+        lfo.reset_lfo();
     }
     void set_lfo_active(bool active) {
         lfo.set_active(active);
+        lfo.reset_lfo();
     }
     bool get_lfo_active() {
         return lfo.is_active();

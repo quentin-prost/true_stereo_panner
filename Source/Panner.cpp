@@ -63,6 +63,7 @@ template <typename SampleType> void Panner<SampleType>::process(juce::dsp::Proce
         modulated_pan = lfo.process_lfo(0.0f);
         juce::jlimit(static_cast<float>(-1.0), static_cast<float>(1.0), static_cast<float>(modulated_pan));
         set_pan(modulated_pan);
+        lfo.skip_samples(m_spec.maximumBlockSize); // skip this amount of sample in the phase, as we are not calling the lfo only once per block. Probably some design choice to reconsider, and build a lfo directly inside the mono_panner & stereo_panner and process the lfo every sample.
         //DBG(modulated_pan);
     }
     
