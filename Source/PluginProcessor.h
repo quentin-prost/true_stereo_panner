@@ -77,7 +77,7 @@ public:
     void getStateInformation (juce::MemoryBlock& destData) override;
     void setStateInformation (const void* data, int sizeInBytes) override;
     
-    float get_rate_in_hz(sync_rate_t rate);
+    float get_rate_in_hz(sync_rate_t rate, float bpm);
     
     juce::AudioProcessorValueTreeState apvts;
 private:

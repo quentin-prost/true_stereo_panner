@@ -59,11 +59,6 @@ public:
     void set_lfo_active(bool active) {
         lfo.set_active(active);
     }
-    void set_lfo_rate_synced(float rate) {
-        juce::jmin(0.01f, rate);
-        m_rate_sync = rate;
-        lfo.set_lfo_rate(rate);
-    }
     void set_lfo_rate_hz(float rate) {
         juce::jmin(0.01f, rate);
         m_rate_hz = rate;
@@ -73,7 +68,12 @@ public:
         juce::jlimit(0.0f, 1.0f, amount);
         lfo.set_lfo_amount(amount);
     }
-    
+    void set_lfo_synced(bool synced) {
+        m_lfo_synced = synced;
+    }
+    void get_lfo_synced() {
+        return m_lfo_synced;
+    }
     void set_mono_panner_rule(juce::dsp::PannerRule rule);
     monoPannerRule get_mono_panner_rule();
     
@@ -90,5 +90,6 @@ private:
     juce::dsp::Panner<SampleType> mono_panner;
     StereoPanner<SampleType> stereo_panner;
     Lfo lfo;
+    bool m_lfo_synced;
 
 };

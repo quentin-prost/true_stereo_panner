@@ -169,11 +169,23 @@ void True_stereo_pannerAudioProcessor::processBlock (juce::AudioBuffer<float>& b
     auto audioBlock = juce::dsp::AudioBlock<float> (buffer);
     auto processContext = juce::dsp::ProcessContextReplacing<float> (audioBlock);
     
-    play_head = getPlayHead();
-    play_head->getCurrentPosition(current_position_info);
+    
     
     panner.set_pan_method((panMethod) pan_method_param->getIndex());
     
+    
+    
+    if (panner.is_lfo_synced) {
+        play_head = getPlayHead();
+        float bpm = play_head->getCurrentPosition(current_position_info).bpm;
+        if ((bpm - last_bpm) > __FLT_EPSILON__)
+            get_rate_in_hz(<#sync_rate_t rate#>)
+            panner.set_lfo_rate_synced(static_cast<float>);
+    } else {
+        const juce::String paramID = ParameterID::lfoRateHz.getParamID();
+        panner.set_lfo_rate_hz(static_cast<float>(apvts.
+    }
+    s.getRawParameterValue(paramID)->load()));
     switch (panner.get_pan_method()) {
         case MONO_PANNER:
             panner.set_mono_panner_rule((juce::dsp::PannerRule) mono_rule_param->getIndex());
@@ -300,10 +312,8 @@ void True_stereo_pannerAudioProcessor::parameterChanged(const juce::String& para
     }
 }
 
-float True_stereo_pannerAudioProcessor::get_rate_in_hz(sync_rate_t rate) {
-    float rate_hz;
-    float bpm = current_position_info.bpm;
-    if (bpm <= __FLT_EPSILON__) jassertfalse; // Some host might not give some bpm values (Audacity for instance)
+float True_stereo_pannerAudioProcessor::get_rate_in_hz(sync_rate_t rate, float bpm) {
+    if (bpm <= __FLT_EPSILON__) jassertfalse;
     DBG(rate);
     //DBG(bpm);
     switch (rate) {
